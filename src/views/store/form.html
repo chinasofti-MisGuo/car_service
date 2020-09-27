@@ -1,0 +1,175 @@
+<div class="layui-form" lay-filter="layuiadmin-form-useradmin" style="padding: 20px 0 0 0;">
+    <div style="display: flex;flex-direction: row;justify-content: flex-start;flex-wrap: wrap;width: 100%;">
+        <div class="layui-form-item" style="width: 50%;">
+            <label class="layui-form-label">门店名称</label>
+            <div class="layui-input-inline">
+                <script type="text/html" template>
+                    <input type="text" name="storeName" value="{{ d.params.storeName || '' }}" placeholder="请输入"
+                        autocomplete="off" class="layui-input">
+                </script>
+            </div>
+        </div>
+
+        <div class="layui-form-item" style="width: 50%;">
+            <label class="layui-form-label">门店地址</label>
+            <div class="layui-input-inline">
+                <script type="text/html" template>
+                    <input type="text" name="storeAddress" value="{{ d.params.storeAddress || '' }}" placeholder="请输入"
+                        autocomplete="off" class="layui-input">
+                </script>
+            </div>
+        </div>
+
+        <div class="layui-form-item" style="width: 50%;">
+            <label class="layui-form-label">负责人姓名</label>
+            <div class="layui-input-inline">
+                <script type="text/html" template>
+                    <input type="text" name="fullName" value="{{ d.params.fullName || '' }}" placeholder="请输入"
+                        autocomplete="off" class="layui-input">
+                </script>
+            </div>
+        </div>
+
+        <div class="layui-form-item" style="width: 50%;">
+            <label class="layui-form-label">手机号</label>
+            <div class="layui-input-inline">
+                <script type="text/html" template>
+                    <input type="text" name="phone" value="{{ d.params.phone || '' }}" placeholder="请输入"
+                        autocomplete="off" class="layui-input">
+                </script>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="layui-form-item" id="area-picker">
+        <label class="layui-form-label">使用区域</label>
+        <div class="layui-input-inline">
+            <input type="hidden" id="reg" name="reg">
+            <div id="regionTest"></div>
+            <div style="margin-left: 15px;">
+                您点击的地域是：<span id="click"></span></br>
+                提交的数据：<span id="all"></span>
+            </div>
+            <div style="display: flex;flex-direction: row;width: 600px">
+
+                <div class="layui-input-inline" style="width: 200px;flex-grow: 1;">
+                    <select name="province" class="province-selector" lay-filter="province-1">
+                        <option value="">请选择省</option>
+                    </select>
+                </div>
+                <div class="layui-input-inline" style="width: 200px;flex-grow: 1;">
+                    <select name="city" class="city-selector" lay-filter="city-1">
+                        <option value="">请选择市</option>
+                    </select>
+                </div>
+                <div class="layui-input-inline" style="width: 200px;flex-grow: 1;">
+                    <select name="county" class="county-selector" lay-filter="county-1">
+                        <option value="">请选择区</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">有效期</label>
+        <div class="layui-input-inline">
+            <script type="text/html" template>
+                <input class="layui-input layui-input-inline" value="{{ d.params.time || '' }}" name="time" id="Time"
+                    placeholder="时间  :  yyyy-MM-dd" autocomplete="off">
+            </script>
+        </div>
+
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-inline">
+            <script type="text/html" template>
+                <input type="radio" name="status" {{ d.params.status== 0 ? 'checked':'' }} value="0" title="启用" checked>
+                <input type="radio" name="status" {{ d.params.status== 1 ? 'checked':'' }} value="1" title="禁用">
+            </script>
+        </div>
+
+    </div>
+
+
+    <div style="display: flex;flex-direction: row;justify-content: flex-start;flex-wrap: wrap;width: 100%;">
+        <div class="layui-form-item" style="width: 50%;">
+            <label class="layui-form-label">开户行</label>
+            <div class="layui-input-inline">
+                <script type="text/html" template>
+                    <input type="text" name="band" value="{{ d.params.band || '' }}" placeholder="请输入"
+                        autocomplete="off" class="layui-input">
+                </script>
+            </div>
+        </div>
+
+        <div class="layui-form-item" style="width: 50%;">
+            <label class="layui-form-label">账号</label>
+            <div class="layui-input-inline">
+                <script type="text/html" template>
+                    <input type="text" name="account" value="{{ d.params.account || '' }}" placeholder="请输入"
+                        autocomplete="off" class="layui-input">
+                </script>
+            </div>
+        </div>
+
+
+
+        <div class="layui-form-item" style="width: 50%;">
+            <label class="layui-form-label">税号</label>
+            <div class="layui-input-inline">
+                <script type="text/html" template>
+                    <input type="text" name="taxCode" value="{{ d.params.taxCode || '' }}" placeholder="请输入"
+                        autocomplete="off" class="layui-input">
+                </script>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <div class="layui-input-inline">
+            <input type="button" lay-submit lay-filter="LAY-store-front-submit" value="确认" class="layui-btn">
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+    layui.config({
+        base: '{/}../start/layui/lay/modules/',
+        version: '1.0'
+    });
+    layui.use(['layer', 'form', 'layarea', 'admin', 'upload', 'tree', 'laydate'], function () {
+        var layer = layui.layer,
+            form = layui.form,
+            layarea = layui.layarea;
+
+        var $ = layui.$,
+            laydate = layui.laydate;
+        form.render();
+
+        laydate.render({
+            elem: '#Time',
+            type: 'datetime'
+        });
+
+        layarea.render({
+            elem: '#area-picker',
+            data: {
+                province: '北京市',
+                city: '北京市',
+                county: '',
+            },
+            change: function (res) {
+                //选择结果
+                console.log(res);
+            }
+        });
+    });
+</script>
