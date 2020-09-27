@@ -14,17 +14,17 @@
         "title": "基础设置(平台)",
         "icon": "layui-icon-set",
         "list": [{
-            "title": "用户协议管理",
-            "jump": "set/user_rule"
+            "title": "施工类型管理",
+            "jump": "set/applyType"
         }, {
-            "title": "关于我们",
-            "jump": "set/about_us"
+            "title": "返工原因设置",
+            "jump": "set/reworkReason"
         }, {
-            "title": "门店到期提醒列表",
-            "jump": "set/store_list"
+            "title": "维修时间",
+            "jump": "set/repairTime"
         }, {
-            "title": "二维码管理",
-            "jump": "set/or_code"
+            "title": "协议管理",
+            "jump": "set/agreement"
         }]
     }, {
         "title": "轮播图管理",

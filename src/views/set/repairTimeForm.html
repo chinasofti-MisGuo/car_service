@@ -1,0 +1,26 @@
+<div class="layui-form" lay-filter="layuiadmin-form-useradmin" style="padding: 20px 0 0 0;">
+    <div style="display: flex;flex-direction: row;justify-content: flex-start;flex-wrap: wrap;width: 100%;">
+        <div class="layui-form-item" style="width: 50%;">
+            <label class="layui-form-label">反工原因</label>
+            <div class="layui-input-inline">
+                <script type="text/html" template>
+                    <input type="text" name="reworkReason" value="{{ d.params.reworkReason || '' }}" placeholder="请输入"
+                        autocomplete="off" class="layui-input">
+                </script>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <div class="layui-input-inline">
+            <input type="button" lay-submit lay-filter="LAY-store-front-submit" value="确认" class="layui-btn">
+        </div>
+    </div>
+
+</div>
+
+<script>
+</script>
