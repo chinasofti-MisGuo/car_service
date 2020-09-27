@@ -1,0 +1,94 @@
+<div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+        <a lay-href="">主页</a>
+        <a><cite>产值管理</cite></a>
+        <a><cite>个人产值</cite></a>
+    </div>
+</div>
+
+<div class="layui-fluid">
+
+    <div class="layui-card">
+
+
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto" lay-filter="LAY-person-search-manage">
+            <div class="layui-form-item">
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">时间</label>
+                    <div class="layui-input-inline">
+                        <input class="layui-input layui-input-inline"  style="width: 186px;" name="time" id="uploadTime" placeholder="起始 - 结束时间  :  yyyy-MM-dd" autocomplete="off" >
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">门店名称</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">人员姓名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-inline" style="margin-left: 10px">
+                    <button class="layui-btn layuiadmin-btn-useradmin" lay-submit lay-filter="LAY-service-store-search">
+                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="layui-card-body">
+
+            <table id="LAY-person-manage" lay-filter="LAY-person-manage"></table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    layui.use('value', layui.factory('value')).use(['admin', 'useradmin', 'table', 'laydate', 'form'], function() {
+        var $ = layui.$,
+            admin = layui.admin,
+            view = layui.view,
+            table = layui.table,
+            laydate = layui.laydate,
+            form = layui.form;
+        form.render();
+
+        /*日期时间范围选择*/
+        laydate.render({
+            elem: '#uploadTime',
+            type: 'datetime',
+            range: true
+        });
+
+
+        /*监听搜索*/
+        form.on('submit(LAY-person-search-manage)', function(data) {
+            var field = data.field;
+            field.token = layui.data('data').token;
+            table.reload('LAY-person-manage', {
+                url: layui.setter.ajaxUrl + '/api/admin/banner/search',
+                method: 'get',
+                where: field,
+                page: true
+            });
+        });
+        
+
+        $('.layui-btn.layuiadmin-btn-useradmin').on('click', function() {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+    });
+</script>

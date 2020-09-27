@@ -1,10 +1,120 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+        <a lay-href="">主页</a>
+        <a><cite>基础设置</cite></a>
+        <a><cite>关于我们</cite></a>
+    </div>
+</div>
 
-</body>
-</html>
+<div class="layui-fluid">
+
+    <div class="layui-card">
+
+        <div class="layui-card-body">
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">关于我们</label>
+                <div class="layui-input-inline" style="width:1000px;">
+                    <script type="text/html" template>
+                        <textarea id="content" name="introduceContent" lay-verify="content" placeholder="请输入">
+						</textarea>
+                    </script>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label"></label>
+                <div class="layui-input-inline">
+                    <input type="button" lay-submit lay-filter="LAY-information-front-submit" value="确认" class="layui-btn">
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    layui.use(['admin', 'form', 'upload', 'layedit'], function() {
+        var $ = layui.$,
+            form = layui.form,
+            layedit = layui.layedit,
+            upload = layui.upload;
+        form.render();
+
+
+
+        setTimeout(function() {
+            /*建立编辑器*/
+            var index = layedit.build('content', {
+                tool: [
+                    'strong', 'underline', 'del', '|', 'fontFomatt', 'colorpicker', '|', 'left', 'center', 'right', '|', 'image_alt', '|',
+                ],
+                height: 360
+            });
+
+            /*ajax赋值*/
+            $.ajax({
+                url: layui.setter.ajaxUrl + "/api/admin/cloud/center",
+                method: "get",
+                data: {
+                    'token': layui.data('data').token
+                },
+                success: function(result) {
+                    layedit.setContent(index, result.data.introduceContent);
+                }
+            });
+
+            /*内容同步*/
+            $('.layui-btn').click(function() {
+                layedit.sync(index);
+            });
+
+            //监听提交
+            form.on('submit(LAY-information-front-submit)', function() {
+
+                if($("#content").val() == null || $("#content").val() == ''){
+                    return layer.alert('内容不能为空', {icon: 2});
+                }
+
+                $.ajax({
+                    url: layui.setter.ajaxUrl + "/api/admin/cloud/edit",
+                    method: "post",
+                    contentType: 'application/json;charset=UTF-8',
+                    data: JSON.stringify({
+                        'token': layui.data('data').token,
+                        'introduceContent':$("#content").val()
+                    }),
+                    success: function(data) {
+                        if(data.data == 1) {
+                            layer.alert('已编辑', {
+                                icon: 1
+                            });
+                            window.location.reload();
+                        } else {
+                            layer.alert('编辑失败，请稍后重试', {
+                                icon: 2
+                            });
+                        }
+                        if(data.code == 403) {
+                            layer.closeAll();
+                            admin.exit();
+                            setTimeout(function() {
+                                layer.alert('此账号已在别处登录,请重新登录！', {
+                                    icon: 5
+                                });
+                            }, 666);
+                        }
+                    },
+                    error: function(data) {
+                        layer.alert('编辑失败，请稍后重试', {
+                            icon: 2
+                        });
+                    }
+                });
+            });
+        }, 10);
+
+    })
+</script>

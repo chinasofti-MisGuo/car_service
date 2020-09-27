@@ -1,0 +1,304 @@
+<div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+        <a lay-href="">主页</a>
+        <a><cite>订单管理</cite></a>
+        <a><cite>订单列表</cite></a>
+    </div>
+</div>
+
+<div class="layui-fluid">
+
+    <div class="layui-card">
+
+
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto" lay-filter="LAY-service-store-manage">
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">门店名称</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">人员姓名</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">合作商名称</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <br>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">公司名称</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-inline" style="width: 296px;">
+                    <label class="layui-form-label">支付状态</label>
+                    <div class="layui-input-block">
+                        <select name="region">
+                            <option value="0">全部</option>
+                            <option value="1">现结</option>
+                            <option value="2">欠账</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="layui-inline" style="width: 296px;">
+                    <label class="layui-form-label">订单类型</label>
+                    <div class="layui-input-block">
+                        <select name="region">
+                            <option value="0">全部</option>
+                            <option value="1">普通订单</option>
+                            <option value="2">内返订单</option>
+                            <option value="3">外返订单</option>
+                            <option value="4">不可修复订单</option>
+                        </select>
+                    </div>
+                </div>
+                <br>
+
+                <div class="layui-inline" style="width: 296px;">
+                    <label class="layui-form-label">状态</label>
+                    <div class="layui-input-block">
+                        <select name="region">
+                            <option value="0">全部</option>
+                            <option value="1">待施工</option>
+                            <option value="2">施工中</option>
+                            <option value="3">待质检</option>
+                            <option value="4">待交付</option>
+                            <option value="4">已交付</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">订单时间</label>
+                    <div class="layui-input-inline">
+                        <input class="layui-input layui-input-inline"  style="width: 186px;" name="time" id="uploadTime" placeholder="起始 - 结束时间  :  yyyy-MM-dd" autocomplete="off" >
+                    </div>
+                </div>
+
+
+                <div class="layui-inline" style="margin-left: 10px">
+                    <button class="layui-btn layuiadmin-btn-useradmin" lay-submit lay-filter="LAY-service-store-search">
+                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+
+
+        <div class="layui-card-body">
+
+            <div style="padding-bottom: 10px;">
+                <button class="layui-btn" onclick="return exportData();">导出Excel</button>
+                <button class="layui-btn layuiadmin-btn-useradmin" data-type="check_out">一键结账</button>
+            </div>
+
+            <table id="LAY-order-manage" lay-filter="LAY-order-manage"></table>
+
+            <script type="text/html" id="imgTpl">
+                <img class="img_banner" style="display: inline-block; width: 30px; height: 30px;" src={{layui.setter.ajaxUrl+d.imgUrl}}>
+            </script>
+
+            <script type="text/html" id="table-banner-operation">
+                <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="detail">详情</a>
+            </script>
+
+            <script type="text/html" id="status">
+                {{#  if(d.status===1){ }}
+                    <span style="color: chartreuse;">待施工</span>
+                {{# } else if(d.status===1){ }}
+                    <span style="color: deeppink;">施工中</span>
+                {{# } else if(d.status===1){ }}
+                    <span style="color: red;">待质检</span>
+                {{# } else if(d.status===1){ }}
+                    <span style="color: blue;">待交付</span>
+                {{#  } else { }}
+                    <span style="color: orange;">已交付</span>
+                {{#  } }}
+            </script>
+
+            <script type="text/html" id="payStatus">
+                {{#  if(d.payStatus===1){ }}
+                <span style="color: chartreuse;">现结</span>
+                {{#  } else { }}
+                <span style="color: orange;">欠账</span>
+                {{#  } }}
+            </script>
+
+
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+
+    //导出
+    function exportData() {
+        layui.use(['jquery', 'layer'], function () {
+            var $ = layui.$,
+                jquery = layui.jquery;
+            $.ajax({
+                type: "get",
+                url: layui.setter.ajaxUrl + "/api/admin/cloud/report/excel",
+                data: {
+                    'token': layui.data('data').token
+                },
+                success: function (result) {
+                    if (result.code == 200) {
+                        layer.alert("导出成功", {icon: 1});
+                    }
+                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    layer.msg('{"status":"' + XMLHttpRequest.status + '","readyState":"' + XMLHttpRequest.readyState + '","textStatus":"' + textStatus + '","errorThrown":"' + errorThrown + '"}')
+                }
+            })
+        })
+    };
+
+
+</script>
+
+<script>
+    layui.use('order', layui.factory('order')).use(['admin', 'useradmin', 'table', 'laydate', 'form'], function() {
+        var $ = layui.$,
+            admin = layui.admin,
+            view = layui.view,
+            table = layui.table,
+            laydate = layui.laydate,
+            form = layui.form;
+        form.render();
+
+        /*日期时间范围选择*/
+        laydate.render({
+            elem: '#uploadTime',
+            type: 'datetime',
+            range: true
+        });
+
+
+        /*监听搜索*/
+        form.on('submit(LAY-service-store-search)', function(data) {
+            var field = data.field;
+            field.token = layui.data('data').token;
+            table.reload('LAY-order-manage', {
+                url: layui.setter.ajaxUrl + '/api/admin/banner/search',
+                method: 'get',
+                where: field,
+                page: true
+            });
+        });
+
+        /*事件*/
+        var active = {
+            add: function() {
+                admin.popup({
+                    title: '添加轮播图',
+                    area: ['500px', '400px'],
+                    id: 'LAY-popup-user-add',
+                    success: function(layero, index) {
+                        view(this.id).render('banner/form',{temp:1}).done(function() {
+                            form.render();
+                            //监听提交
+                            form.on('submit(LAY-banner-front-submit)', function(data) {
+                                var field = data.field;
+                                $.ajax({
+                                    url:layui.setter.ajaxUrl+"/api/admin/banner/add"
+                                    ,method:"post"
+                                    ,contentType:'application/json;charset=UTF-8'
+                                    ,data: JSON.stringify({
+                                        'token': layui.data('data').token
+                                        ,'imgName':field.imgName
+                                        ,'imgAddress':field.imgAddress
+                                        ,'imgUrl':field.imgUrl
+                                    }),
+                                    success:function(data){
+                                        if(data.data==1){
+                                            layer.alert('已添加',{icon:1});
+                                            layui.table.reload('LAY-order-manage');
+                                        }else{
+                                            layer.alert('添加失败，请稍后重试',{icon:2});
+                                        }
+                                        if (data.code == 403) {
+                                            layer.closeAll();
+                                            admin.exit();
+                                            setTimeout(function () {
+                                                layer.alert('此账号已在别处登录,请重新登录！', { icon: 5 });
+                                            }, 666);
+                                        }
+                                    },
+                                    error:function(data){
+                                        layer.alert('添加失败，请稍后重试',{icon:2});
+                                    }
+                                });
+                                layer.close(index);
+                            });
+                        });
+                    }
+                });
+            },
+            check_out:function () {
+                var checkStatus = table.checkStatus('LAY-order-manage')
+                    , checkData = checkStatus.data; //得到选中的数据
+                if (checkData.length === 0) {
+                    return layer.msg('请选择数据');
+                }
+                layer.confirm('确定要批量改为已结账嘛？', function (index) {
+                    var uid='';
+                    for (let i = 0; i < checkData.length; i++) {
+                        uid += checkData[i].uid+','
+                    }
+                    uid = uid.slice(0,-1);
+
+                    $.ajax({
+                        url: layui.setter.ajaxUrl + "/"
+                        , method: "get"
+                        , contentType: 'application/json;charset=UTF-8'
+                        ,data: JSON.stringify({
+                            'token': layui.data('data').token
+                            ,'uid':uid
+                        })
+                        , success: function (data) {
+                            console.log(data);
+                            if (data.code == 403) {
+                                layer.closeAll();
+                                admin.exit();
+                                setTimeout(function () {
+                                    layer.alert('此账号已在别处登录,请重新登录！', {icon: 5});
+                                }, 666);
+                            }
+                        },
+                        error: function (data) {
+                            layer.alert('操作失败,请稍后重试！', {icon: 2});
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
+
+        };
+
+        $('.layui-btn.layuiadmin-btn-useradmin').on('click', function() {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+    });
+</script>
