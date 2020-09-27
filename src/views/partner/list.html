@@ -1,0 +1,109 @@
+<div class="layui-card layadmin-header">
+	<div class="layui-breadcrumb" lay-filter="breadcrumb">
+		<a lay-href="">主页</a>
+		<a><cite>合作机构</cite></a>
+	</div>
+</div>
+
+<div class="layui-fluid">
+	
+	<div class="layui-card">
+
+		<div class="layui-card-body">
+			
+			<div style="padding-bottom: 10px;">
+				<button class="layui-btn layuiadmin-btn-useradmin" data-type="add">添加合作机构</button>
+			</div>
+			
+			<table id="LAY-partner-manage" lay-filter="LAY-partner-manage"></table>
+			
+			<script type="text/html" id="status">
+				{{#  if(d.status===0){ }}
+			    	<input type="checkbox" checked="" name="open"  switch_id="{{d.id}}" lay-skin="switch" lay-filter="switchTest" lay-text="正常|停用">
+			    {{#  } else { }}
+			    	<input type="checkbox" name="close"  switch_id="{{d.id}}" lay-skin="switch" lay-filter="switchTest" lay-text="正常|停用">
+			    {{#  } }}
+			</script>
+			
+			<script type="text/html" id="table-partner-operation">
+				<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+				<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+			</script>
+			
+		</div>
+		
+	</div>
+	
+</div>
+
+<script>
+	layui.use('partner', layui.factory('partner')).use(['admin', 'useradmin', 'table', 'laydate', 'form'], function() {
+		var $ = layui.$,
+			admin = layui.admin,
+			view = layui.view,
+			table = layui.table,
+			laydate = layui.laydate,
+			form = layui.form;
+			form.render();	
+		
+		/*事件*/
+		var active = {
+			add: function() {
+				admin.popup({
+					title: '添加合作机构',
+					area: ['500px', '550px'],
+					id: 'LAY-popup-user-add',
+					success: function(layero, index) {
+						view(this.id).render('partner/form',{temp:1}).done(function() {
+							form.render();
+							//监听提交
+							form.on('submit(LAY-partner-front-submit)', function(data) {
+								var field = data.field;
+								$.ajax({
+					              	url:layui.setter.ajaxUrl+"/api/admin/partner/add"
+					                ,method:"post"
+					              	,contentType:'application/json;charset=UTF-8'
+					              	,data: JSON.stringify({
+					              		 'token': layui.data('data').token
+				              			,'partnerName':field.partnerName
+				              			,'partnerPhone':field.partnerPhone
+				              			,'partnerPeople':field.partnerPeople
+				              			,'startTime':field.startTime
+				              			,'endTime':field.endTime
+				              			,'status':field.status
+					              	}),
+					                  success:function(data){
+					                    	if(data.data==1){
+					                    		layer.alert('已添加',{icon:1});
+						                    	layui.table.reload('LAY-partner-manage');
+					                    	}else{
+					                    		layer.alert('添加失败，请稍后重试',{icon:2});
+					                    	}
+					                    	if (data.code == 403) {
+							                    layer.closeAll();
+							                    admin.exit();
+							                    setTimeout(function () {
+							                        layer.alert('此账号已在别处登录,请重新登录！', { icon: 5 });
+							                    }, 666);
+							                }
+					                  },
+					                  error:function(data){
+					                      layer.alert('添加失败，请稍后重试',{icon:2});
+					                  }
+					              });
+								layer.close(index);
+							});
+						});
+					}
+				});
+			}
+			
+		};
+
+		$('.layui-btn.layuiadmin-btn-useradmin').on('click', function() {
+			var type = $(this).data('type');
+			active[type] ? active[type].call(this) : '';
+		});
+		
+	});
+</script>

@@ -1,0 +1,104 @@
+<div class="layui-form" lay-filter="layuiadmin-form-useradmin" style="padding: 20px 0 0 0;">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">文字说明</label>
+        <div class="layui-input-inline">
+            <script type="text/html" template>
+                <textarea type="text"  lay-verify="required" name="textDescription" value="{{ d.params.textDescription || '' }}"
+                       style="resize:none;width: 350px" autocomplete="off" class="layui-textarea">
+                    {{ d.params.textDescription || '' }}
+                </textarea>
+            </script>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-inline">
+            <script type="text/html" template>
+                <textarea type="text"  lay-verify="required" name="remarks" value="{{ d.params.remarks || '' }}"
+                          style="resize:none;width: 350px" autocomplete="off" class="layui-textarea">
+                    {{ d.params.remarks || '' }}
+                </textarea>
+            </script>
+        </div>
+    </div>
+
+
+    <!--上传pdf-->
+    <div class="layui-form-item layui-form">
+        <label class="layui-form-label">Pdf</label>
+        <div class="layui-input-inline">
+            <div class="layui-upload">
+
+                <button type="button" class="layui-btn " id="test1">上传Pdf</button>
+                <div class="layui-upload-list">
+                    <script type="text/html" template>
+                        <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;width:250px;height: 80px;">
+                            预览：
+                            <div id="demo1">{{ layui.setter.ajaxUrl + d.params.pdf || '' }}</div>
+                            <p id="demoText"></p>
+                            <input type="hidden" name="pdf" id="pdf" lay-verify="pdf" value={{ d.params.pdf || '' }} />
+                        </blockquote>
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <div class="layui-input-inline">
+            <input type="button" lay-submit lay-filter="LAY-manager-front-submit" value="确认" class="layui-btn">
+        </div>
+    </div>
+
+</div>
+
+
+
+<script>
+
+        layui.use(['admin', 'form', 'upload', 'tree'], function () {
+            var $ = layui.$,
+                form = layui.form,
+                upload = layui.upload,
+                tree = layui.tree;
+            form.render();
+
+            /*上传pdf*/
+            upload.render({
+                elem: '#test1',
+                url: layui.setter.ajaxUrl + '/api/upload/pdf',
+                accept: 'file', //普通文件
+                exts: 'pdf', //只允许上传压缩文件
+                before: function (obj) {
+                    layer.msg('文件上传中...', {
+                        icon: 16,
+                        shade: 0.01,
+                        time: 0
+                    })
+                    obj.preview(function (index, file, result) {
+                        // console.log(result);
+                        // $('#demo1').text(layui.setter.ajaxUrl+result);
+                    });
+                },
+
+                done: function (result) {
+                    if (result.code == 200) {
+                        layer.msg('上传成功', {
+                            icon: 1
+                        }, 1000)
+                        $("#pdf").val(result.data);
+                        $('#demo1').text(layui.setter.ajaxUrl + result.data);
+                    } else {
+                        layer.alert('上传失败', {
+                            icon: 2
+                        });
+                    }
+                }
+            });
+
+        })
+</script>

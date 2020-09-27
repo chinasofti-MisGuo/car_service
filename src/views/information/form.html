@@ -1,0 +1,126 @@
+<div class="layui-form" lay-filter="layuiadmin-form-useradmin" style="padding: 20px 0 0 0;">
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">标题</label>
+		<div class="layui-input-inline">
+			<script type="text/html" template>
+				<input type="text" name="informationTitle" value="{{ d.params.informationTitle || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+			</script>
+		</div>
+	</div>
+
+	<!--上传图片-->
+	<div class="layui-input-block" style="margin-top: 15px;" id="image">
+		<div class="layui-upload">
+			<button type="button" class="layui-btn " id="upImage">上传图片</button>
+			<div class="layui-upload-list">
+				<script type="text/html" template>
+					<blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;width:153px;height: 40px;">
+						预览图：<img id="demo1" class="img" width="40px" src={{d.params.informationImage ? layui.setter.ajaxUrl + d.params.informationImage: ''}}>
+						<p id="demoText"></p>
+						<input type="hidden" name="informationImage" id="imgUrl" lay-verify="photo" value={{ d.params.informationImage || '' }} />
+					</blockquote>
+				</script>
+			</div>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">内容</label>
+		<div class="layui-input-inline" style="width:650px;">
+			<script type="text/html" template>
+				<textarea id="content" name="informationBrief" lay-verify="required"  placeholder="请输入">
+					{{d.params.informationBrief || ''}}
+				</textarea>
+			</script>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline">
+			<input type="button" lay-submit lay-filter="LAY-information-front-submit" value="确认" class="layui-btn">
+		</div>
+	</div>
+
+</div>
+
+<script src="/enabling/start/layui/lay/modules/Content/ace/ace.js"></script>
+<!--<script src="/manager/lerenkang/start/layui/lay/modules/Content/ace/ace.js"></script>-->
+<script>
+	layui.use(['admin', 'form', 'upload', 'layedit'], function() {
+		var $ = layui.$,
+			form = layui.form,
+			layedit = layui.layedit,
+			upload = layui.upload;
+			form.render();
+		setTimeout(function() {
+			var index = layedit.build('content', {
+				tool: [
+					'html', 'code', 'strong', 'italic', 'underline', 'del', 'addhr', '|', 'fontFomatt', 'colorpicker', 'face', '|', 'left', 'center', 'right', '|', 'link', 'unlink', 'image_alt', 'video', 'audio', 'anchors', '|', 'fullScreen'
+				],
+				uploadImage: {
+					url: layui.setter.ajaxUrl + '/api/upload/layedit/image'
+				},
+				uploadVideo: {
+					url: layui.setter.ajaxUrl + '/api/upload/layedit/video',
+					accept: 'video',
+					acceptMime: 'video/*',
+					exts: 'mp4|flv|avi|rm|rmvb'
+				},
+				uploadAudio: {
+					url: layui.setter.ajaxUrl + '/api/upload/layedit/audio',
+					accept: 'audio',
+					acceptMime: 'audio/*',
+					exts: 'mp3|m4a|wma|amr|ape|flac|aac'
+				},
+				height: 200
+			}); //建立编辑器		
+			
+			$('.layui-btn').click(function () {
+            	layedit.sync(index);
+        	});
+        
+		}, 10);
+		
+		
+		form.verify({
+			photo: function(value, item) {
+				if(value == '' || value == '/') {
+					return '请选择图片';
+				}
+			}
+		});
+
+		/*上传图片*/
+		upload.render({
+			elem: '#upImage',
+			url: layui.setter.ajaxUrl + '/api/upload/image',
+			before: function(obj) {
+				layer.msg('图片上传中...', {
+					icon: 16,
+					shade: 0.01,
+					time: 0
+				})
+				obj.preview(function(index, file, result) {
+					$('#demo1').attr('src', result);
+				});
+			},
+
+			done: function(result) {
+				layer.close(layer.msg());
+				if(result.code == 200) {
+					layer.msg('上传成功', {
+						icon: 1
+					}, 1000)
+					$('#imgUrl').val(result.data);
+				} else {
+					layer.alert('上传失败', {
+						icon: 2
+					});
+				}
+			}
+		});
+
+	})
+</script>

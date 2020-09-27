@@ -1,0 +1,408 @@
+<div class="layui-form" lay-filter="layuiadmin-form-useradmin" style="padding: 20px 0 0 0;">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">标题</label>
+        <div class="layui-input-inline">
+            <script type="text/html" template>
+                <input type="text" lay-verify="required" name="reportTitle" value="{{ d.params.reportTitle || '' }}"
+                       placeholder="请输入" autocomplete="off" class="layui-input">
+            </script>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">报告类型</label>
+        <div class="layui-input-inline" style="width: 190px;">
+            <script type="text/html" template>
+                <select name="reportType" id="reportType" lay-filter="reportType" lay-verify="required">
+                    <input type="hidden" id="ba" value="{{d.params.reportType}}"/>
+                </select>
+            </script>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item" id="industry" style="display: none;">
+        <label class="layui-form-label">选择行业</label>
+        <div class="layui-input-inline">
+            <div class="layui-unselect layui-form-select downpanel">
+                <div class="layui-select-title">
+                    <span class="layui-input layui-unselect" id="treeclass">选择行业</span>
+
+                    <input type="hidden" name="reportIndustry" value="0">
+                    <i class="layui-edge"></i>
+                </div>
+                <dl class="layui-anim layui-anim-upbit">
+                    <dd>
+                        <ul id="classtree"></ul>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item" onclick="divClick()">
+        <label class="layui-form-label">是否付费</label>
+        <div class="layui-input-block">
+            <script type="text/html" template>
+                <input type="radio" name="isPay" {{ d.params.isPay== 0 ? 'checked':'' }} value="0" title="免费">
+                <input type="radio" id="pay" name="isPay" {{ d.params.isPay== 1 ? 'checked':'' }} value="1" title="付费">
+            </script>
+        </div>
+    </div>
+
+    <div class="layui-form-item" id="old">
+        <label class="layui-form-label">原价</label>
+        <div class="layui-input-inline">
+            <script type="text/html" template>
+                <input type="text" name="reportOriginalPrice" placeholder="￥"
+                       value="{{ d.params.reportOriginalPrice || '' }}" placeholder="请输入"
+                       autocomplete="off" class="layui-input">
+            </script>
+        </div>
+    </div>
+
+    <div class="layui-form-item" id="new">
+        <label class="layui-form-label" id="price">现价</label>
+        <div class="layui-input-inline">
+            <script type="text/html" template>
+                <input type="text" lay-verify="required" name="reportPresentPrice" placeholder="￥"
+                       value="{{ d.params.reportPresentPrice || '' }}" placeholder="请输入"
+                       autocomplete="off" class="layui-input">
+            </script>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-form" style="margin-top: 10px;">
+        <label class="layui-form-label">合作机构</label>
+        <div class="layui-input-inline">
+            <script type="text/html" template lay-done="layui.data.groups(d);">
+                <div id="partner">
+                </div>
+            </script>
+        </div>
+    </div>
+
+    <!--上传pdf-->
+    <div class="layui-form-item layui-form">
+        <label class="layui-form-label">Pdf</label>
+        <div class="layui-input-inline">
+            <div class="layui-upload">
+
+                <button type="button" class="layui-btn " id="test1">上传Pdf</button>
+                <div class="layui-upload-list">
+                    <script type="text/html" template>
+                        <blockquote class="layui-elem-quote layui-quote-nm"
+                                    style="margin-top: 10px;width:250px;height: 80px;">
+                            预览：
+                            <div id="demo1"></div>
+                            <p id="demoText"></p>
+                            <input type="hidden" name="pdf" id="pdf" lay-verify="pdf" value={{ d.params.pdf || '' }} />
+                        </blockquote>
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <div class="layui-input-inline">
+            <input type="button" lay-submit lay-filter="LAY-reportData-front-submit" value="确认" class="layui-btn">
+        </div>
+    </div>
+
+</div>
+
+<style type="text/css">
+    .downpanel .layui-select-title span {
+        line-height: 38px;
+    }
+
+    /*继承父类颜色*/
+
+    .downpanel dl dd:hover {
+        background-color: inherit;
+    }
+</style>
+<style type="text/css">
+    body {
+        height: 100%;
+        width: 100%;
+        background-size: cover;
+        margin: 0 auto;
+    }
+
+    .layui-form-checkbox span {
+        height: 30px;
+    }
+
+    .layui-field-title {
+        border-top: 1px solid white;
+    }
+
+    table {
+        width: 100% !important;
+    }
+</style>
+
+<script>
+    layui.data.groups = function (d) {
+
+        layui.use(['admin', 'form', 'upload', 'tree'], function () {
+            var $ = layui.$,
+                form = layui.form,
+                upload = layui.upload,
+                tree = layui.tree;
+            form.render();
+            var url = '';
+
+            /*报告类型回显*/
+            setTimeout(function () {
+                var ba = $("#ba").val();
+                var list = [{"id": 1, "reportType": "政策解读报告"},
+                    {"id": 2, "reportType": "行业报告"},
+                    {"id": 3, "reportType": "产品报告"},
+                    {"id": 4, "reportType": "其他报告"}];
+                var server = document.getElementById("reportType");
+                for (var p in list) {
+                    var option = document.createElement("option");
+                    option.setAttribute("value", list[p].id);
+                    option.innerText = list[p].reportType;
+                    server.appendChild(option);
+                    form.render("select");
+                }
+                if (ba != 'undefined') {
+                    var classId = 'dd[lay-value=' + ba + ']';
+                    $("#reportType").next().find('dl').find(classId).click();
+                }
+                form.render('select');
+            }, 10);
+
+            if (d.params.isPay == 0) {
+                document.getElementById("old").style.display = "block";
+                document.getElementById("new").style.display = "block";
+                document.getElementById("price").innerHTML = "现价";
+            } else {
+                document.getElementById("old").style.display = "none";
+                document.getElementById("new").style.display = "block";
+                document.getElementById("price").innerHTML = "价格";
+            }
+            // form.verify({
+            //     photo: function (value, item) {
+            //         if (value == '') {
+            //             return '请上传图片';
+            //         }
+            //     }
+            // });
+
+            form.verify({
+                pdf: function (value) {
+                    if (value == '' || value == null) {
+                        return '请选择pdf';
+                    }
+                }
+            });
+
+            /*多图片上传*/
+            upload.render({
+                elem: '#test2'
+                , url: layui.setter.ajaxUrl + '/api/upload/image'
+                , method: "post"
+                , contentType: 'application/json;charset=UTF-8'
+                , exts: 'jpg|jpeg|png' //允许上传的文件后缀
+                , multiple: true
+                , before: function (obj) {
+                    layer.msg('图片上传中...', {
+                        icon: 16,
+                        shade: 0.01,
+                        time: 0
+                    })
+                    var files = obj.pushFile();
+                    obj.preview(function (index, file, result) {
+                        $('#demo2').append('<div class="image-container" id="container' + index + '"><div class="delete-css"><button id="upload_img_' + index + '" class="layui-btn layui-btn-danger layui-btn-xs">删除</button></div>' + '<img id="img" src="' + result + '"  alt="' + file.name + '" class="layui-upload-img" style="width:40px;height:40px;">')
+                        $("#temp").append('<input type="hidden" id="img' + index + '" name="temp" value="' + result + '" alt="' + file.name + '" >');
+                        //删除某图片
+                        $("#upload_img_" + index).bind('click', function () {
+                            delete files[index];
+                            $("#container" + index).remove();
+                            $("#img" + index).remove();
+                        });
+                    });
+                }
+                , done: function (result) {
+                    layer.close(layer.msg());
+                    if (result.code == 200) {
+                        layer.msg('上传成功', {
+                            icon: 1
+                        }, 1000)
+                        url += result.data + ",";
+                        $('#image').val(url);
+                    } else {
+                        layer.alert('上传失败', {
+                            icon: 2
+                        });
+                    }
+                }
+            });
+
+            /*上传pdf*/
+            upload.render({
+                elem: '#test1',
+                url: layui.setter.ajaxUrl + '/api/upload/pdf',
+                accept: 'file', //普通文件
+                exts: 'pdf', //只允许上传压缩文件
+                before: function (obj) {
+                    layer.msg('文件上传中...', {
+                        icon: 16,
+                        shade: 0.01,
+                        time: 0
+                    })
+                    obj.preview(function (index, file, result) {
+                        // console.log(result);
+                        // $('#demo1').text(layui.setter.ajaxUrl+result);
+                    });
+                },
+
+                done: function (result) {
+                    if (result.code == 200) {
+                        layer.msg('上传成功', {
+                            icon: 1
+                        }, 1000)
+                        $("#pdf").val(result.data);
+                        $('#demo1').text(layui.setter.ajaxUrl + result.data);
+                    } else {
+                        layer.alert('上传失败', {
+                            icon: 2
+                        });
+                    }
+                }
+            });
+
+            /*监听报告类型下拉列表选择事件*/
+            form.on('select(reportType)', function (data) {
+                var flag = $("#reportType").val();
+                if (flag == 2) {
+                    document.getElementById("industry").style.display = "block";
+                    data = null;
+
+                    /*加载下拉框*/
+                    $.ajax({
+                        url: layui.setter.ajaxUrl + "/api/admin/industry/tree",
+                        method: "get",
+                        data: {
+                            'token': layui.data('data').token
+                        },
+                        success: function (result) {
+
+                            data = result.data;
+
+                            tree.render({
+                                elem: '#classtree',
+                                data: data,
+                                click: function (node) {
+                                    $("input[name='reportIndustry']")[0].value = node.data.id;
+                                    dddeep(data);
+                                    // var $select = $($(this)[0].elem).parents(".layui-form-select");
+                                    // $select.removeClass("layui-form-selected").find(".layui-select-title span").html(result.data.title).end().find("input:hidden[name='reportIndustry']").val(result.data.id);
+                                }
+                            });
+
+
+                            $("input[name='reportIndustry']")[0].value = d.params.reportIndustry;
+
+                            dddeep(data);
+
+                            function dddeep(data){
+
+                                data.some((obj) => {
+                                    if (obj.id == $("input[name='reportIndustry']")[0].value) {
+                                        treeclass.innerHTML = obj.title;
+                                        return true;
+                                    }
+                                    if(obj.children.length){
+                                        if(dddeep(obj.children)){
+                                            return true;
+                                        }
+                                    }
+                                    return false;
+                                });
+                            }
+
+                            $(".downpanel").on("click", ".layui-select-title", function (e) {
+                                $(".layui-form-select").not($(this).parents(".layui-form-select")).removeClass("layui-form-selected");
+                                $(this).parents(".downpanel").toggleClass("layui-form-selected");
+                                layui.stope(e);
+                            }).on("click", "dl i", function (e) {
+
+                                layui.stope(e);
+                            });
+
+                        }
+                    });
+                } else {
+                    document.getElementById("industry").style.display = "none";
+                }
+            });
+
+            /*显示、隐藏*/
+            window.divClick = function () {
+                var show = "";
+                var apm = document.getElementsByName("isPay");
+                for (var i = 0; i < apm.length; i++) {
+                    if (apm[i].checked)
+                        show = apm[i].value;
+                }
+                switch (show) {
+                    case '1':
+                        document.getElementById("old").style.display = "none";
+                        document.getElementById("new").style.display = "block";
+                        document.getElementById("price").innerHTML = "价格";
+                        break;
+                    case '0':
+                        document.getElementById("old").style.display = "block";
+                        document.getElementById("new").style.display = "block";
+                        document.getElementById("price").innerHTML = "现价";
+                        break;
+                }
+            }
+
+            /*点击全选*/
+            form.on('checkbox(allChoose)', function (data) {
+                var child = $("#partner input[name='checkbox']");
+                child.each(function (index, item) {
+                    item.checked = data.elem.checked;
+                });
+                form.render('checkbox');
+            });
+
+            /*全部合作机构*/
+            $.ajax({
+                url: layui.setter.ajaxUrl + '/api/admin/partner/all',
+                type: 'get',
+                data: {
+                    'token': layui.data('data').token,
+                },
+                success: function (data) {
+                    $('#partner').append('<input type="checkbox" lay-filter="allChoose" title="全选"> ')
+                    for (var i = 0; i < data.data.length; i++) {
+                        var a = '<div class="line"></div><input type="checkbox" id="' + data.data[i].id + '" value="' + data.data[i].id + '" name="checkbox" title="' + data.data[i].partnerName + '" data-pid="' + data.data[i].id + '">';
+                        $('#partner').append(a);
+                        form.render();
+                    }
+
+                    if (d.params.id) {
+                        var partner = d.params.partner.split(',');
+                        for (var i = 0; i < partner.length; i++) {
+                            $('#partner input[value=' + partner[i] + ']').next().click();
+                        }
+                    }
+
+                }
+            });
+
+            form.render();
+        })
+    };
+</script>

@@ -1,0 +1,43 @@
+<div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+        <a lay-href="">主页</a>
+        <a><cite>赋能报告总数量</cite></a>
+    </div>
+</div>
+
+<div class="layui-fluid">
+
+    <div class="layui-card">
+
+        <div class="layui-card-body">
+
+            <!--数据表格-->
+            <table id="LAY-report-manage" lay-filter="LAY-report-manage"></table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    layui.use('enterpriseData', layui.factory('enterpriseData')).use(['admin', 'useradmin', 'table', 'laydate', 'form'], function() {
+        var $ = layui.$,
+            admin = layui.admin,
+            view = layui.view,
+            table = layui.table,
+            laydate = layui.laydate,
+            form = layui.form;
+        form.render();
+
+
+
+
+
+        $('.layui-btn.layuiadmin-btn-useradmin').on('click', function() {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+    });
+</script>

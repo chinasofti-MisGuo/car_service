@@ -1,0 +1,82 @@
+<div class="layui-form" lay-filter="layuiadmin-form-useradmin" style="padding: 20px 0 0 0;">
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">合作机构名称</label>
+		<div class="layui-input-inline">
+			<script type="text/html" template>
+				<input type="text" name="partnerName" value="{{ d.params.partnerName || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+			</script>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">合作机构联系人</label>
+		<div class="layui-input-inline">
+			<script type="text/html" template>
+				<input type="text" name="partnerPeople" value="{{ d.params.partnerPeople || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+			</script>
+		</div>
+	</div>
+	
+	<div class="layui-form-item">
+		<label class="layui-form-label">联系方式</label>
+		<div class="layui-input-inline">
+			<script type="text/html" template>
+				<input type="text" name="partnerPhone" value="{{ d.params.partnerPhone || '' }}" lay-verify="phone" placeholder="请输入" autocomplete="off" class="layui-input">
+			</script>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">合作开始时间</label>
+		<div class="layui-input-inline">
+			<script type="text/html" template lay-done="layui.data.groups(d);">
+				<input class="layui-input layui-input-inline" value="{{ d.params.startTime || '' }}" name="startTime" id="startTime" lay-verify="required" placeholder="合作开始时间  :  yyyy-MM-dd" autocomplete="off">
+			</script>
+		</div>
+	</div>
+	
+	<div class="layui-form-item">
+		<label class="layui-form-label">合作截止时间</label>
+		<div class="layui-input-inline">
+			<script type="text/html" template lay-done="layui.data.groups(d);">
+				<input class="layui-input layui-input-inline" value="{{ d.params.endTime || '' }}" name="endTime" id="endTime" lay-verify="required" placeholder="合作截止时间 :  yyyy-MM-dd" autocomplete="off">
+			</script>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline">
+			<input type="button" lay-submit lay-filter="LAY-partner-front-submit" value="确认" class="layui-btn">
+		</div>
+	</div>
+
+</div>
+
+<script>
+	
+	layui.data.groups = function(d) {
+		layui.use(['admin', 'form', 'upload','laydate'], function() {
+			var $ = layui.$,
+				form = layui.form,
+				laydate = layui.laydate,
+				upload = layui.upload;
+				form.render();	
+				
+				/*日期时间范围选择*/
+				laydate.render({
+					elem: '#startTime',
+					type: 'datetime'
+				});
+				
+				laydate.render({
+					elem: '#endTime',
+					type: 'datetime'
+				});
+				
+		})
+			
+	};
+		
+</script>

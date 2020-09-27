@@ -1,0 +1,117 @@
+<div class="layui-card layadmin-header">
+	<div class="layui-breadcrumb" lay-filter="breadcrumb">
+		<a lay-href="">主页</a>
+		<a><cite>资讯管理</cite></a>
+	</div>
+</div>
+
+<div class="layui-fluid">
+	
+	<div class="layui-card">
+
+		<div class="layui-card-body">
+			
+			<div style="padding-bottom: 10px;">
+				<button class="layui-btn layuiadmin-btn-useradmin" data-type="add">添加资讯</button>
+			</div>
+
+			<table id="LAY-information-manage" lay-filter="LAY-information-manage"></table>
+			
+			<script type="text/html" id="informationImage">
+				<img class="img_information" style="display: inline-block; width: 30px; height: 30px;" src={{layui.setter.ajaxUrl+d.informationImage}}>
+			</script>
+			
+			<script type="text/html" id="table-information-operation">
+				<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+				<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+			</script>
+			
+		
+		</div>
+		
+	</div>
+	
+</div>
+
+<script>
+	layui.use('information', layui.factory('information')).use(['admin', 'useradmin', 'table', 'laydate', 'form'], function() {
+		var $ = layui.$,
+			admin = layui.admin,
+			view = layui.view,
+			table = layui.table,
+			laydate = layui.laydate,
+			form = layui.form;
+			form.render();
+		
+		/*点击查看大图*/
+        $('body').on('click','.img_information', function(){
+            layer.open({
+                type: 1,
+                title: false,
+                closeBtn: 0,
+                area: 'auto',
+                maxHeight: 600,
+                maxWidth : 600,
+                skin: 'layui-layer-nobg',
+                shadeClose: true,
+                content: '<img style="max-width: 600px;max-height: 600px;" src="'+$(this).attr('src')+'"/>'
+            });
+        });
+
+		/*事件*/
+		var active = {
+			add: function() {
+				admin.popup({
+					title: '添加资讯',
+					area: ['900px', '680px'],
+					id: 'LAY-popup-user-add',
+					success: function(layero, index) {
+						view(this.id).render('information/form',{temp:1}).done(function() {
+							form.render();
+							//监听提交
+							form.on('submit(LAY-information-front-submit)', function(data) {
+								var field = data.field;
+								$.ajax({
+					              	url:layui.setter.ajaxUrl+"/api/admin/information/add"
+					                ,method:"post"
+					              	,contentType:'application/json;charset=UTF-8'
+					              	,data: JSON.stringify({
+					              		 'token': layui.data('data').token
+				              			,'informationTitle':field.informationTitle
+				              			,'informationBrief':field.informationBrief
+				              			,'informationImage':field.informationImage
+					              	}),
+					                  success:function(data){
+					                    	if(data.data==1){
+					                    		layer.alert('已添加',{icon:1});
+						                    	layui.table.reload('LAY-information-manage');
+					                    	}else{
+					                    		layer.alert('添加失败，请稍后重试',{icon:2});
+					                    	}
+					                    	if (data.code == 403) {
+							                    layer.closeAll();
+							                    admin.exit();
+							                    setTimeout(function () {
+							                        layer.alert('此账号已在别处登录,请重新登录！', { icon: 5 });
+							                    }, 666);
+							                }
+					                  },
+					                  error:function(data){
+					                      layer.alert('添加失败，请稍后重试',{icon:2});
+					                  }
+					              });
+								layer.close(index);
+							});
+						});
+					}
+				});
+			}
+		};
+
+		$('.layui-btn.layuiadmin-btn-useradmin').on('click', function() {
+			var type = $(this).data('type');
+			active[type] ? active[type].call(this) : '';
+		});
+		
+	});
+</script>

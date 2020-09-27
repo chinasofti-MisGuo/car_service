@@ -1,0 +1,64 @@
+<div class="layui-card layadmin-header">
+	<div class="layui-breadcrumb" lay-filter="breadcrumb">
+		<a lay-href="">主页</a>
+		<a><cite>登记列表</cite></a>
+	</div>
+</div>
+
+<div class="layui-fluid">
+	
+	<div class="layui-card">
+
+		<div class="layui-card-body">
+			
+			<table id="LAY-register-manage" lay-filter="LAY-register-manage"></table>
+			
+			<script type="text/html" id="informationImage">
+				<img class="img" style="display: inline-block; width: 30px; height: 30px;" src={{layui.setter.ajaxUrl+d.informationImage}}>
+			</script>
+			
+			<script type="text/html" id="table-register-operation">
+				<a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="detail"><i class="layui-icon layui-icon-search"></i>详情</a>
+				<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+			</script>
+			
+			<script type="text/html" id="education">
+				{{#  if(d.education){ }}
+					{{d.education}}
+			    {{#  } else { }}
+			    	暂无
+			    {{#  } }}
+			</script>
+			
+			<script type="text/html" id="major">
+				{{#  if(d.major){ }}
+					{{d.major}}
+			    {{#  } else { }}
+			    	暂无
+			    {{#  } }}
+			</script>
+		
+		</div>
+		
+	</div>
+	
+</div>
+
+<script>
+	layui.use('register', layui.factory('register')).use(['admin', 'useradmin', 'table', 'laydate', 'form'], function() {
+		var $ = layui.$,
+			admin = layui.admin,
+			view = layui.view,
+			table = layui.table,
+			laydate = layui.laydate,
+			form = layui.form;
+			form.render();
+		
+
+		$('.layui-btn.layuiadmin-btn-useradmin').on('click', function() {
+			var type = $(this).data('type');
+			active[type] ? active[type].call(this) : '';
+		});
+		
+	});
+</script>

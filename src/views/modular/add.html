@@ -1,0 +1,118 @@
+<div class="layui-form" lay-filter="layuiadmin-form-useradmin" style="padding: 20px 0 0 0;">
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">模块名称</label>
+		<div class="layui-input-inline">
+			<script type="text/html" template>
+				<input type="text" name="modularName" value="{{ d.params.modularName || '' }}" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+			</script>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<div class="layui-input-inline">
+			<script type="text/html" template>
+				<input type="hidden" name="baseId" id="baseId" value="0" placeholder="请输入" autocomplete="off" class="layui-input">
+			</script>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label">所属模块</label>
+		<div class="layui-input-inline">
+			<div class="layui-unselect layui-form-select downpanel">
+				<div class="layui-select-title">
+					<span class="layui-input layui-unselect" id="treeclass">选择模块</span>
+					<input type="hidden" name="baseId" value="0">
+					<i class="layui-edge"></i>
+				</div>
+				<dl class="layui-anim layui-anim-upbit">
+					<dd>
+						<ul id="classtree"></ul>
+					</dd>
+				</dl>
+			</div>
+		</div>
+	</div>
+
+	<div class="layui-form-item">
+		<label class="layui-form-label"></label>
+		<div class="layui-input-inline">
+			<input type="button" lay-submit lay-filter="LAY-modular-front-submit"  value="确认" class="layui-btn">
+		</div>
+	</div>
+
+</div>
+
+<style type="text/css">
+	.downpanel .layui-select-title span {
+		line-height: 38px;
+	}
+	/*继承父类颜色*/
+
+	.downpanel dl dd:hover {
+		background-color: inherit;
+	}
+</style>
+<style type="text/css">
+	body {
+		height: 100%;
+		width: 100%;
+		background-size: cover;
+		margin: 0 auto;
+	}
+
+	.layui-form-checkbox span {
+		height: 30px;
+	}
+
+	.layui-field-title {
+		border-top: 1px solid white;
+	}
+
+	table {
+		width: 100% !important;
+	}
+</style>
+
+<script>
+	layui.use(['admin', 'form', 'util', 'tree', 'jquery', 'form'], function() {
+		var tree = layui.tree,
+			layer = layui.layer,
+			util = layui.util,
+			form = layui.form,
+			$ = layui.$;
+
+		data = null;
+		/*加载下拉框*/
+		$.ajax({
+			url: layui.setter.ajaxUrl + "/api/admin/modular/tree",
+			method: "get",
+			data: {
+				'token': layui.data('data').token
+			},
+			success: function(result) {
+
+				data = result.data;
+
+				tree.render({
+					elem: '#classtree',
+					data: data,
+					click: function(node) {
+						var $select = $($(this)[0].elem).parents(".layui-form-select");
+						$select.removeClass("layui-form-selected").find(".layui-select-title span").html(node.data.title).end().find("input:hidden[name='baseId']").val(node.data.id);
+					}
+				});
+				$(".downpanel").on("click", ".layui-select-title", function(e) {
+					$(".layui-form-select").not($(this).parents(".layui-form-select")).removeClass("layui-form-selected");
+					$(this).parents(".downpanel").toggleClass("layui-form-selected");
+					layui.stope(e);
+				}).on("click", "dl i", function(e) {
+					layui.stope(e);
+				});
+
+			}
+		});
+
+	})
+</script>

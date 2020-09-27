@@ -1,0 +1,51 @@
+<div class="layui-card layadmin-header">
+	<div class="layui-breadcrumb" lay-filter="breadcrumb">
+		<a lay-href="">主页</a>
+		<a><cite>大数据云赋能</cite></a>
+		<a><cite>数据采集</cite></a>
+	</div>
+</div>
+
+<div class="layui-fluid">
+	
+	<div class="layui-card">
+
+		<div class="layui-card-body">
+
+			<table id="LAY-enterPrise-manage" lay-filter="LAY-enterPrise-manage"></table>
+
+			<script type="text/html" id="table-cloud-operation">
+				<a class="layui-btn layui-btn-warm layui-btn-xs" lay-href="cloudEnabling/enterPrise/manager_list/id={{d.id}}">企业管理数据</a>
+			</script>
+
+			<script type="text/html" id="isData">
+				{{#  if(d.isData == 0){ }}
+					<button class="layui-btn layui-btn-xs">无</button>
+				{{#  } else{ }}
+					<button class="layui-btn layui-btn-normal layui-btn-xs">有</button>
+				{{#  } }}
+			</script>
+
+		</div>
+		
+	</div>
+	
+</div>
+
+<script>
+	layui.use('enter', layui.factory('enter')).use(['admin', 'useradmin', 'table', 'laydate', 'form'], function() {
+		var $ = layui.$,
+			admin = layui.admin,
+			view = layui.view,
+			table = layui.table,
+			laydate = layui.laydate,
+			form = layui.form;
+			form.render();
+
+		$('.layui-btn.layuiadmin-btn-useradmin').on('click', function() {
+			var type = $(this).data('type');
+			active[type] ? active[type].call(this) : '';
+		});
+		
+	});
+</script>

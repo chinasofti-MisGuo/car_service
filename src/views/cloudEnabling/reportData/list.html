@@ -1,0 +1,238 @@
+<div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+        <a lay-href="">主页</a>
+        <a><cite>大数据云赋能</cite></a>
+        <a><cite>数据报告</cite></a>
+    </div>
+</div>
+
+<div class="layui-fluid">
+
+    <div class="layui-card">
+
+        <div class="layui-card-body">
+
+            <div style="padding-bottom: 10px;">
+                <button class="layui-btn layuiadmin-btn-useradmin" data-type="add">添加报告</button>
+                <button class="layui-btn" onclick="return exportData();">报告导出</button>
+                <button class="layui-btn" onclick="downloadTemplate();">模板下载</button>
+                <button id="importData" class="layui-btn" onclick="importData()">报告导入</button>
+            </div>
+
+            <table id="LAY-reportData-manage" lay-filter="LAY-reportData-manage"></table>
+
+            <script type="text/html" id="table-cloud-operation">
+                <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="detail"><i
+                        class="layui-icon layui-icon-detail"></i>详情</a>
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i
+                        class="layui-icon layui-icon-edit"></i>编辑</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i
+                        class="layui-icon layui-icon-delete"></i>删除</a>
+            </script>
+
+            <script type="text/html" id="report">
+                {{#  if(d.reportType == "1"){ }}
+                <button class="layui-btn layui-btn-xs">政策解读报告</button>
+                {{#  } else if(d.reportType == "2"){ }}
+                <button class="layui-btn layui-btn-warm layui-btn-xs">行业报告</button>
+                {{#  } else if(d.reportType == "3"){ }}
+                <button class="layui-btn layui-btn-danger layui-btn-xs">产品报告</button>
+                {{#  } else{ }}
+                <button class="layui-btn layui-btn-normal layui-btn-xs">其他报告</button>
+                {{#  } }}
+            </script>
+
+            <script type="text/html" id="isPay">
+                {{#  if(d.isPay == 0){ }}
+                <button class="layui-btn layui-btn-xs">免费</button>
+                {{#  } else{ }}
+                <button class="layui-btn layui-btn-warm layui-btn-xs">付费</button>
+                {{#  } }}
+            </script>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+
+    //导出
+    function exportData() {
+        layui.use(['jquery', 'layer'], function () {
+            var $ = layui.$,
+                jquery = layui.jquery;
+            $.ajax({
+                type: "get",
+                url: layui.setter.ajaxUrl + "/api/admin/cloud/report/excel",
+                data: {
+                    'token': layui.data('data').token
+                },
+                success: function (result) {
+                    if (result.code == 200) {
+                        layer.alert("导出成功", {icon: 1});
+                    }
+                }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    layer.msg('{"status":"' + XMLHttpRequest.status + '","readyState":"' + XMLHttpRequest.readyState + '","textStatus":"' + textStatus + '","errorThrown":"' + errorThrown + '"}')
+                }
+            })
+        })
+    };
+
+
+</script>
+
+<script>
+    layui.use('cloud', layui.factory('cloud')).use(['admin', 'useradmin', 'table', 'laydate', 'form'], function () {
+        var $ = layui.$,
+            admin = layui.admin,
+            view = layui.view,
+            table = layui.table,
+            laydate = layui.laydate,
+            form = layui.form;
+        form.render();
+
+        //监听单元格编辑
+        table.on('edit(LAY-reportData-manage)', function (obj) {
+            var value = obj.value;//修改后的数据
+            var field = obj.field;//修改的字段名
+            var data = obj.data;//修改的当行数据
+
+            $.ajax({
+                url: layui.setter.ajaxUrl + "/api/admin/cloud/report/edit",
+                method: "post",
+                contentType: 'application/json;charset=UTF-8',
+                data: JSON.stringify({
+                    'token': layui.data('data').token
+                    , 'onclickNumber': value
+                    , 'id': obj.data.id
+                }),
+                success: function (data) {
+                    if (data.data == 1) {
+                        layer.alert('设置成功', {
+                            icon: 1
+                        });
+                        layui.table.reload('LAY-reportData-manage');
+                    } else {
+                        layer.alert('操作失败，请稍后重试', {
+                            icon: 2
+                        });
+                    }
+                    if (data.code == 403) {
+                        layer.closeAll();
+                        admin.exit();
+                        setTimeout(function () {
+                            layer.alert('此账号已在别处登录,请重新登录！', {
+                                icon: 5
+                            });
+                        }, 666);
+                    }
+                },
+                error: function (data) {
+                    layer.alert('操作失败，请稍后重试', {
+                        icon: 2
+                    });
+                }
+            });
+
+        });
+
+        var active = {
+            add: function () {
+                admin.popup({
+                    title: '添加报告',
+                    area: ['600px', '650px'],
+                    id: 'LAY-popup-user-add',
+                    success: function (layero, index) {
+                        view(this.id).render('cloudEnabling/reportData/add', {temp: 1}).done(function () {
+                            form.render();
+                            //监听提交
+                            form.on('submit(LAY-reportData-front-submit)', function (data) {
+                                var field = data.field;
+
+                                var images = '';
+                                $("input[name='reportContent']").each(function (i, item) {
+                                    images += item.value + ',';
+                                });
+                                images = images.slice(0, -1);
+
+                                var id = '';
+                                $("input:checkbox[name='checkbox']:checked").each(function (i) {
+                                    id += $(this).attr('id') + ',';
+                                });
+                                id = id.slice(0, -1);
+                                $.ajax({
+                                    url: layui.setter.ajaxUrl + "/api/admin/cloud/report/add"
+                                    , method: "post"
+                                    , contentType: 'application/json;charset=UTF-8'
+                                    , data: JSON.stringify({
+                                        'token': layui.data('data').token
+                                        , 'reportTitle': field.reportTitle
+                                        , 'reportType': field.reportType
+                                        , 'reportIndustry': field.reportIndustry
+                                        , 'reportOriginalPrice': field.reportOriginalPrice
+                                        , 'reportPresentPrice': field.reportPresentPrice
+                                        , 'isPay': field.isPay
+                                        , 'reportContent': images
+                                        , 'pdf': field.pdf
+                                        , 'partner': id
+                                    }),
+                                    success: function (data) {
+                                        if (data.data == 1) {
+                                            layer.alert('已添加', {icon: 1});
+                                            layui.table.reload('LAY-reportData-manage');
+                                        } else {
+                                            layer.alert('添加失败，请稍后重试', {icon: 2});
+                                        }
+                                        if (data.code == 403) {
+                                            layer.closeAll();
+                                            admin.exit();
+                                            setTimeout(function () {
+                                                layer.alert('此账号已在别处登录,请重新登录！', {icon: 5});
+                                            }, 666);
+                                        }
+                                    },
+                                    error: function (data) {
+                                        layer.alert('添加失败，请稍后重试', {icon: 2});
+                                    }
+                                });
+                                layer.close(index);
+                            });
+                        });
+                    }
+                });
+            },
+            export: function () {
+                layer.confirm('是否确认导出？', function (index) {
+                    $.ajax({
+                        url: layui.setter.ajaxUrl + "/api/admin/cloud/report/excel"
+                        , method: "get"
+                        , contentType: 'application/json;charset=UTF-8'
+                        , success: function (data) {
+                            console.log(data);
+                            if (data.code == 403) {
+                                layer.closeAll();
+                                admin.exit();
+                                setTimeout(function () {
+                                    layer.alert('此账号已在别处登录,请重新登录！', {icon: 5});
+                                }, 666);
+                            }
+                        },
+                        error: function (data) {
+                            layer.alert('导出失败,请稍后重试！', {icon: 2});
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
+        };
+
+        $('.layui-btn.layuiadmin-btn-useradmin').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+    });
+</script>
