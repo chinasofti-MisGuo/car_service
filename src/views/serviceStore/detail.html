@@ -1,0 +1,23 @@
+<title>详情</title>
+
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto" lay-filter="layadmin-userfront-formlist">
+
+            <div class="layui-card-body">
+                人员列表:
+                <table id="LAY-user-message" lay-filter="LAY-order-manage"></table>
+                合作商信息:
+                <table id="LAY-partner-manage" lay-filter="LAY-order-manage"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="status">
+    {{#  if(d.status===0){ }}
+        <button class="layui-btn layui-btn-xs">启用</button>
+    {{# } else if(d.status===1){ }}
+        <button class="layui-btn layui-btn-xs">禁用</button>
+    {{#  } }}
+</script>
