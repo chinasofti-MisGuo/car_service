@@ -13,58 +13,57 @@ layui.define(['table', 'form'], function (exports) {
     /*列表*/
     table.render({
         elem: '#LAY-store-manage',
-        url: layui.setter.ajaxUrl + '/api/admin/cloud/report/list',
+        url: layui.setter.ajaxUrl + '/api/store/list',
         method: 'get',
         cols: [
             [{
                 type: 'checkbox'
             }, {
-                type: 'numbers',
-                title: '序号',
-                align: 'center'
-            }, {
                 field: 'storeName',
                 title: '门店名称',
                 align: 'center'
-            }, {
-                field: 'storeNumber',
-                title: '门店编号',
-                align: 'center'
-            }, {
+            },  {
                 field: 'storeAddress',
                 title: '门店地址',
                 align: 'center'
+            },  {
+                field: 'storeStatus',
+                title: '状态',
+                align: 'center'
             }, {
-                field: 'fullName',
+                field: 'liableName',
                 title: '负责人姓名',
                 align: 'center'
             }, {
-                field: 'phone',
+                field: 'liablePhone',
                 title: '负责人手机号',
                 align: 'center'
             }, {
-                field: 'region',
+                field: 'useArea',
                 title: '使用区域',
                 align: 'center'
             }, {
-                field: 'status',
-                title: '状态',
-                align: 'center',
-                templet: '#status'
-            }, {
-                field: 'time',
+                field: 'validPeriod',
                 title: '有效期',
                 align: 'center'
             }, {
-                field: 'band',
+                field: 'createTime',
+                title: '创建日期',
+                align: 'center'
+            }, {
+                field: 'accountBank',
                 title: '开户行',
                 align: 'center'
             }, {
-                field: 'account',
+                field: 'accountName',
+                title: '户名',
+                align: 'center'
+            }, {
+                field: 'bankCardNumber',
                 title: '账号',
                 align: 'center'
             }, {
-                field: 'taxCode',
+                field: 'taxNumber',
                 title: '税号',
                 align: 'center'
             }, {
@@ -74,6 +73,10 @@ layui.define(['table', 'form'], function (exports) {
                 width: 200
             }]
         ],
+        where:{
+            limit:10,
+            page:1
+        },
         page: true,
         text: {
             none: '暂无数据',

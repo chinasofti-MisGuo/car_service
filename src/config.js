@@ -22,7 +22,7 @@ layui.define(['laytpl', 'layer', 'element', 'util'], function(exports){
     
     ,pageTabs: false //是否开启页面选项卡功能。单页版不推荐开启
     
-    ,ajaxUrl:'http://localhost:8081/enabling'
+    ,ajaxUrl:'http://121.36.207.106/car-service/'
     
     ,name: '汽车维修后台管理系统'
     
