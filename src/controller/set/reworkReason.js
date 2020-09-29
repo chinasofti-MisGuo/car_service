@@ -12,8 +12,8 @@ layui.define(['table', 'form'], function (exports) {
 
     /*列表*/
     table.render({
-        elem: '#LAY-service-store-manage',
-        url: layui.setter.ajaxUrl + '/api/admin/cloud/report/list',
+        elem: '#LAY-rework-reason-manage',
+        url: layui.setter.ajaxUrl + 'rework/reason/list',
         method: 'get',
         cols: [
             [{
@@ -33,12 +33,18 @@ layui.define(['table', 'form'], function (exports) {
                 width: 200
             }]
         ],
+        where:{
+            limit:20,
+            page:1,
+            storeId:2
+        },
         page: true,
         text: {
             none: '暂无数据',
             error: '对不起，加载出现异常！'
         },
         done: function (data) {
+            console.log(data)
             if (data.code == 403) {
                 layer.closeAll();
                 admin.exit();
@@ -90,19 +96,19 @@ layui.define(['table', 'form'], function (exports) {
                     }, 666);
                 }
                 $('checkbox').prop('checked', false);
-                layui.table.reload('LAY-banner-manage');
+                layui.table.reload('LAY-rework-reason-manage');
             },
             error: function (err) {
                 layer.alert("操作失败", {
                     icon: 2
                 });
-                layui.table.reload('LAY-banner-manage');
+                layui.table.reload('LAY-rework-reason-manage');
             }
         });
     });
 
     /*监听数据报告编辑、删除操作*/
-    table.on('tool(LAY-service-store-manage)', function (obj) {
+    table.on('tool(LAY-rework-reason-manage)', function (obj) {
         var data = obj.data;
         if (obj.event === 'del') {
             layer.confirm('真的删除行么', function (index) {
