@@ -1,53 +1,49 @@
+
 <div class="layui-form" lay-filter="layuiadmin-form-useradmin" style="padding: 20px 0 0 0;">
-    <div style="display: flex;flex-direction: row;justify-content: flex-start;flex-wrap: wrap;width: 100%;">
-        <div class="layui-form-item" style="width: 50%;">
+
+        <div class="layui-form-item">
             <label class="layui-form-label">姓名</label>
             <div class="layui-input-inline">
                 <script type="text/html" template>
-                    <input type="text" name="storeName" value="{{ d.params.storeName || '' }}" placeholder="请输入"
+                    <input type="text" name="actualName" value="{{ d.params.actualName || '' }}" placeholder="请输入"
                         autocomplete="off" class="layui-input">
                 </script>
             </div>
         </div>
 
-        <div class="layui-form-item" style="width: 50%;">
+        <div class="layui-form-item">
             <label class="layui-form-label">手机号</label>
             <div class="layui-input-inline">
                 <script type="text/html" template>
-                    <input type="text" name="storeAddress" value="{{ d.params.storeAddress || '' }}" placeholder="请输入"
+                    <input type="text" name="phone" value="{{ d.params.phone || '' }}" placeholder="请输入"
                         autocomplete="off" class="layui-input">
                 </script>
             </div>
         </div>
 
-        <div class="layui-form-item" style="width: 50%;">
+        <div class="layui-form-item">
             <label class="layui-form-label">角色</label>
             <div class="layui-input-inline">
                 <script type="text/html" template>
-                    <input type="text" name="fullName" value="{{ d.params.fullName || '' }}" placeholder="请输入"
-                        autocomplete="off" class="layui-input">
+                    <input type="checkbox" value="salesman" title="业务员" name="checkbox">
+                    <input type="checkbox" value="quality" title="质检员" name="checkbox">
+                    <input type="checkbox" value="mechanic" title="技工" name="checkbox">
                 </script>
             </div>
         </div>
 
-        <div class="layui-form-item" style="width: 50%;">
+        <div class="layui-form-item">
             <label class="layui-form-label">状态</label>
             <div class="layui-input-inline">
                 <script type="text/html" template>
-                    <input type="radio" name="status" {{ d.params.status== 0 ? 'checked':'' }} value="0" title="启用"
+                    <input type="radio" name="personStatus" {{ d.params.personStatus== 0 ? 'checked':'' }} value="0" title="启用"
                         checked>
-                    <input type="radio" name="status" {{ d.params.status== 1 ? 'checked':'' }} value="1" title="禁用">
+                    <input type="radio" name="personStatus" {{ d.params.personStatus== 1 ? 'checked':'' }} value="1" title="禁用">
                 </script>
             </div>
         </div>
 
-    </div>
-
-
-    </div>
-
-
-    <div class="layui-form-item">
+        <div class="layui-form-item">
         <label class="layui-form-label"></label>
         <div class="layui-input-inline">
             <input type="button" lay-submit lay-filter="LAY-store-front-submit" value="确认" class="layui-btn">
@@ -55,8 +51,3 @@
     </div>
 
 </div>
-
-
-<script>
-    
-</script>

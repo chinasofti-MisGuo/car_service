@@ -13,7 +13,7 @@ layui.define(['table', 'form'], function (exports) {
     /*列表*/
     table.render({
         elem: '#LAY-staff-manage',
-        url: layui.setter.ajaxUrl + '/api/admin/cloud/report/list',
+        url: layui.setter.ajaxUrl + '/api/personnel/list',
         method: 'get',
         cols: [
             [{
@@ -23,7 +23,7 @@ layui.define(['table', 'form'], function (exports) {
                 title: '序号',
                 align: 'center'
             }, {
-                field: 'name',
+                field: 'actualName',
                 title: '姓名',
                 align: 'center'
             }, {
@@ -31,11 +31,11 @@ layui.define(['table', 'form'], function (exports) {
                 title: '手机号',
                 align: 'center'
             }, {
-                field: 'character',
+                field: 'roles',
                 title: '角色',
                 align: 'center'
             }, {
-                field: 'state',
+                field: 'personStatus',
                 title: '状态',
                 align: 'center'
             }, {
