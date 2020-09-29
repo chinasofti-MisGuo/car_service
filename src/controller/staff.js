@@ -23,7 +23,7 @@ layui.define(['table', 'form'], function (exports) {
                 title: '序号',
                 align: 'center'
             }, {
-                field: 'name',
+                field: 'actualName',
                 title: '姓名',
                 align: 'center'
             }, {

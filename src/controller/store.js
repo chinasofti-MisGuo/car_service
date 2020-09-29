@@ -83,6 +83,7 @@ layui.define(['table', 'form'], function (exports) {
             error: '对不起，加载出现异常！'
         },
         done: function (data) {
+            
             if (data.code == 403) {
                 layer.closeAll();
                 admin.exit();
@@ -188,28 +189,27 @@ layui.define(['table', 'form'], function (exports) {
                 layer.close(index);
             });
         } else if (obj.event === 'edit') {
+            console.log(obj.data.validPeriod)
+            var temp =obj.data.validPeriod;
+            obj.data.validPeriod=temp[0]+'-'+temp[1]+'-'+temp[2]+' '+temp[3]+':'+temp[4]+':'+temp[5];
             admin.popup({
                 title: '编辑',
                 area: ['600px', '650px'],
                 id: 'LAY-popup-user-add',
                 success: function (layero, index) {
                     view(this.id).render('store/form', data).done(function () {
-                        form.on('submit(LAY-reportData-front-submit)', function (data) {
+                        form.on('submit(LAY-store-front-submit)', function (data) {
                             var field = data.field;
-                            field.token = layui.data('data').token;
+                            // field.token = layui.data('data').token;
                             field.id = obj.data.id;
-                            var id = '';
-                            $("input:checkbox[name='checkbox']:checked").each(function (i) {
-                                id += $(this).attr('id') + ',';
-                            });
-                            id = id.slice(0, -1);
+                            field.validPeriod=field.validPeriod.replace(" ",'T')
+                            field.useArea = field.province + field
+                                .city + field.county;
                             $.ajax({
-                                url: layui.setter.ajaxUrl + "/api/admin/cloud/report/edit",
-                                method: "post",
+                                url: layui.setter.ajaxUrl + "api/store/update",
+                                method: "PUT",
                                 contentType: 'application/json;charset=UTF-8',
-                                data: JSON.stringify({
-                                    field
-                                }),
+                                data: JSON.stringify(field),
                                 success: function (data) {
                                     if (data.data == 1) {
                                         layer.alert('已更新', {

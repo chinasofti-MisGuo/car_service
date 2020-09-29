@@ -103,7 +103,7 @@
             <label class="layui-form-label">户名</label>
             <div class="layui-input-inline">
                 <script type="text/html" template>
-                    <input type="text" name="accountBank" value="{{ d.params.accountBank || '' }}" placeholder="请输入"
+                    <input type="text" name="accountName" value="{{ d.params.accountName || '' }}" placeholder="请输入"
                         autocomplete="off" class="layui-input">
                 </script>
             </div>
@@ -149,6 +149,7 @@
         base: '{/}../start/layui/lay/modules/',
         version: '1.0'
     });
+    
     layui.use(['layer', 'form', 'layarea', 'admin', 'upload', 'tree', 'laydate'], function () {
         var layer = layui.layer,
             form = layui.form,

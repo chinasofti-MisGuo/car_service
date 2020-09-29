@@ -274,7 +274,7 @@ layui.define(["laytpl", "laypage", "layer", "form", "util"], function(e) {
 				};
 			if(i.startTime = (new Date).getTime(), a.url) {
 				var r = {};
-				r['token']=layui.data('data').token;
+				// r['token']=layui.data('data').token;
 				r[l.pageName] = e, r[l.limitName] = a.limit;
 				var d = t.extend(r, a.where);
 				a.contentType && 0 == a.contentType.indexOf("application/json") && (d = JSON.stringify(d)), i.loading(), t.ajax({

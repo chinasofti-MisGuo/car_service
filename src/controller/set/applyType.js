@@ -13,7 +13,7 @@ layui.define(['table', 'form'], function (exports) {
     /*列表*/
     table.render({
         elem: '#LAY-service-store-manage',
-        url: layui.setter.ajaxUrl + '/api/admin/cloud/report/list',
+        url: layui.setter.ajaxUrl + 'rework/reason/list',
         method: 'get',
         cols: [
             [{
@@ -47,6 +47,7 @@ layui.define(['table', 'form'], function (exports) {
             error: '对不起，加载出现异常！'
         },
         done: function (data) {
+            console.log(data)
             if (data.code == 403) {
                 layer.closeAll();
                 admin.exit();
