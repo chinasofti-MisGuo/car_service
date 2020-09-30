@@ -10,7 +10,7 @@
 
     <div class="layui-card">
 
-        
+
 
 
         <div class="layui-card-body">
@@ -31,7 +31,7 @@
                         class="layui-icon layui-icon-delete"></i>删除</a>
             </script>
 
-            
+
 
 
         </div>
@@ -41,118 +41,146 @@
 </div>
 
 <script>
-    layui.use('set/reworkReason', layui.factory('reworkReason')).use(['admin','useradmin', 'table', 'laydate', 'form'], function () {
-        var $ = layui.$,
-            admin = layui.admin,
-            view = layui.view,
-            table = layui.table,
-            laydate = layui.laydate,
-            form = layui.form;
+    layui.use('set/reworkReason', layui.factory('reworkReason')).use(['admin', 'useradmin', 'table', 'laydate', 'form'],
+        function () {
+            var $ = layui.$,
+                admin = layui.admin,
+                view = layui.view,
+                table = layui.table,
+                laydate = layui.laydate,
+                form = layui.form;
 
-        form.render();
+            form.render();
 
 
 
-        form.on('submit(LAY-rework-reason-search)', function(data){
-            var field = data.field;
-            console.log(field);
-            table.reload('LAY-rework-reason-manage', {
-                url: layui.setter.ajaxUrl + '/api/admin/tag/search',
-                method: 'get',
-                where: field,
-                page: true
-            });
-        });
-
-        var active = {
-            add: function () {
-                admin.popup({
-                    title: '新增门店',
-                    area: ['800px', '650px'],
-                    id: 'LAY-popup-user-add',
-                    success: function (layero, index) {
-                        view(this.id).render('set/reworkReasonForm', {temp: 1}).done(function () {
-                            form.render();
-                            //监听提交
-                            form.on('submit(LAY-store-front-submit)', function (data) {
-                                var field = data.field;
-                                field.token = layui.data('data').token;
-                                $.ajax({
-                                    url: layui.setter.ajaxUrl + "/api/admin/cloud/report/add"
-                                    , method: "post"
-                                    , contentType: 'application/json;charset=UTF-8'
-                                    , data: JSON.stringify({
-                                        field
-                                    }),
-                                    success: function (data) {
-                                        if (data.data == 1) {
-                                            layer.alert('已添加', {icon: 1});
-                                            layui.table.reload('LAY-rework-reason-manage');
-                                        } else {
-                                            layer.alert('添加失败，请稍后重试', {icon: 2});
-                                        }
-                                        if (data.code == 403) {
-                                            layer.closeAll();
-                                            admin.exit();
-                                            setTimeout(function () {
-                                                layer.alert('此账号已在别处登录,请重新登录！', {icon: 5});
-                                            }, 666);
-                                        }
-                                    },
-                                    error: function (data) {
-                                        layer.alert('添加失败，请稍后重试', {icon: 2});
-                                    }
-                                });
-                                layer.close(index);
-                            });
-                        });
-                    }
+            form.on('submit(LAY-rework-reason-search)', function (data) {
+                var field = data.field;
+                console.log(field);
+                table.reload('LAY-rework-reason-manage', {
+                    url: layui.setter.ajaxUrl + '/api/admin/tag/search',
+                    method: 'get',
+                    where: field,
+                    page: true
                 });
-            },
-            export: function () {
-                var checkStatus = table.checkStatus('LAY-rework-reason-manage')
-                    , checkData = checkStatus.data; //得到选中的数据
-                if (checkData.length === 0) {
-                    return layer.msg('请选择数据');
-                }
-                var uid='';
-                for (let i = 0; i < checkData.length; i++) {
-                    uid += checkData[i].uid+','
-                }
-                uid = uid.slice(0,-1);
-                layer.confirm('是否确认导出？', function (index) {
+            });
 
-                    $.ajax({
-                        url: layui.setter.ajaxUrl + "/api/export"
-                        , method: "get"
-                        , contentType: 'application/json;charset=UTF-8'
-                        ,data: JSON.stringify({
-                            'token': layui.data('data').token,
-                            'uid':uid
-                        })
-                        , success: function (data) {
-                            console.log(data);
-                            if (data.code == 403) {
-                                layer.closeAll();
-                                admin.exit();
-                                setTimeout(function () {
-                                    layer.alert('此账号已在别处登录,请重新登录！', {icon: 5});
-                                }, 666);
-                            }
-                        },
-                        error: function (data) {
-                            layer.alert('导出失败,请稍后重试！', {icon: 2});
+            var active = {
+                add: function () {
+                    admin.popup({
+                        title: '新增门店',
+                        area: ['800px', '650px'],
+                        id: 'LAY-popup-user-add',
+                        success: function (layero, index) {
+                            view(this.id).render('set/reworkReasonForm', {
+                                temp: 1
+                            }).done(function () {
+                                form.render();
+                                //监听提交
+                                form.on('submit(LAY-store-front-submit)', function (
+                                    data) {
+                                    var field = data.field;
+                                    // field.token = layui.data('data').token;
+                                    var a = {
+                                        "id": 0,
+                                        "reason": "",
+                                        "storeId": 0
+                                    }
+                                    $.ajax({
+                                        url: layui.setter.ajaxUrl +
+                                            "api/rework/reason/add",
+                                        method: "post",
+                                        contentType: 'application/json;charset=UTF-8',
+                                        data: JSON.stringify(field),
+                                        success: function (data) {
+                                            if (data.data == 1) {
+                                                layer.alert('已添加', {
+                                                    icon: 1
+                                                });
+                                                layui.table.reload(
+                                                    'LAY-rework-reason-manage'
+                                                    );
+                                            } else {
+                                                layer.alert(
+                                                    '添加失败，请稍后重试', {
+                                                        icon: 2
+                                                    });
+                                            }
+                                            if (data.code == 403) {
+                                                layer.closeAll();
+                                                admin.exit();
+                                                setTimeout(
+                                                    function () {
+                                                        layer
+                                                            .alert(
+                                                                '此账号已在别处登录,请重新登录！', {
+                                                                    icon: 5
+                                                                }
+                                                                );
+                                                    }, 666);
+                                            }
+                                        },
+                                        error: function (data) {
+                                            layer.alert(
+                                                '添加失败，请稍后重试', {
+                                                    icon: 2
+                                                });
+                                        }
+                                    });
+                                    layer.close(index);
+                                });
+                            });
                         }
                     });
-                    layer.close(index);
-                });
-            }
-        };
+                },
+                export: function () {
+                    var checkStatus = table.checkStatus('LAY-rework-reason-manage'),
+                        checkData = checkStatus.data; //得到选中的数据
+                    if (checkData.length === 0) {
+                        return layer.msg('请选择数据');
+                    }
+                    var uid = '';
+                    for (let i = 0; i < checkData.length; i++) {
+                        uid += checkData[i].uid + ','
+                    }
+                    uid = uid.slice(0, -1);
+                    layer.confirm('是否确认导出？', function (index) {
 
-        $('.layui-btn.layuiadmin-btn-useradmin').on('click', function () {
-            var type = $(this).data('type');
-            active[type] ? active[type].call(this) : '';
+                        $.ajax({
+                            url: layui.setter.ajaxUrl + "/api/export",
+                            method: "get",
+                            contentType: 'application/json;charset=UTF-8',
+                            data: JSON.stringify({
+                                'token': layui.data('data').token,
+                                'uid': uid
+                            }),
+                            success: function (data) {
+                                console.log(data);
+                                if (data.code == 403) {
+                                    layer.closeAll();
+                                    admin.exit();
+                                    setTimeout(function () {
+                                        layer.alert('此账号已在别处登录,请重新登录！', {
+                                            icon: 5
+                                        });
+                                    }, 666);
+                                }
+                            },
+                            error: function (data) {
+                                layer.alert('导出失败,请稍后重试！', {
+                                    icon: 2
+                                });
+                            }
+                        });
+                        layer.close(index);
+                    });
+                }
+            };
+
+            $('.layui-btn.layuiadmin-btn-useradmin').on('click', function () {
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            });
+
         });
-
-    });
 </script>
