@@ -56,13 +56,13 @@
 
             /*ajax赋值*/
             $.ajax({
-                url: layui.setter.ajaxUrl + "/api/admin/cloud/center",
+                url: layui.setter.ajaxUrl + "/api/system/1",
                 method: "get",
                 data: {
                     'token': layui.data('data').token
                 },
                 success: function(result) {
-                    layedit.setContent(index, result.data.introduceContent);
+                    layedit.setContent(index, result.data.aboutUs);
                 }
             });
 
@@ -79,12 +79,13 @@
                 }
 
                 $.ajax({
-                    url: layui.setter.ajaxUrl + "/api/admin/cloud/edit",
-                    method: "post",
+                    url: layui.setter.ajaxUrl + "/api/system/update",
+                    method: "put",
                     contentType: 'application/json;charset=UTF-8',
                     data: JSON.stringify({
                         'token': layui.data('data').token,
-                        'introduceContent':$("#content").val()
+                        'aboutUs':$("#content").val(),
+                        'id':1
                     }),
                     success: function(data) {
                         if(data.data == 1) {

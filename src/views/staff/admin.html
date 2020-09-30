@@ -68,15 +68,6 @@
                         class="layui-icon layui-icon-delete"></i>删除</a>
             </script>
 
-            <!--上架、下架-->
-            <script type="text/html" id="status">
-                {{#  if(d.status===1){ }}
-                <input type="checkbox" checked="" name="open"  switch_id="{{d.id}}" lay-skin="switch" lay-filter="switchTest" lay-text="启用|禁用">
-                {{#  } else { }}
-                <input type="checkbox" name="close"  switch_id="{{d.id}}" lay-skin="switch" lay-filter="switchTest" lay-text="启用|禁用">
-                {{#  } }}
-            </script>
-
 
         </div>
 

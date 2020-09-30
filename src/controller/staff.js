@@ -11,10 +11,8 @@ layui.define(['table', 'form'], function (exports) {
         form = layui.form;
 
     /*列表*/
-    table.render({
+    var params= {
         elem: '#LAY-staff-manage',
-        url: layui.setter.ajaxUrl + '/api/personnel/list',
-        method: 'get',
         cols: [
             [{
                 type: 'checkbox'
@@ -53,8 +51,28 @@ layui.define(['table', 'form'], function (exports) {
         text: {
             none: '暂无数据',
             error: '对不起，加载出现异常！'
-        },
+        }
+    };
+    table.render(Object.assign({
+        url: layui.setter.ajaxUrl + '/api/personnel/list',
+        method: 'get',
         done: function (data) {
+            var temp = [];
+            var arr = {
+                salesman: "业务员",
+                quality: "质检员",
+                mechanic: "技工",
+            }
+            data.data.map((obj) => {
+                obj.roles = obj.roles.split(",");
+                obj.roles.map((item, index) => {
+                    obj.roles[index] = arr[item];
+                });
+                obj.roles=obj.roles.join(",")
+                temp.push(obj);
+            })
+            data = temp;
+            console.log(data);
             if (data.code == 403) {
                 layer.closeAll();
                 admin.exit();
@@ -64,8 +82,10 @@ layui.define(['table', 'form'], function (exports) {
                     });
                 }, 666);
             }
+            console.log(data);
+            table.render(Object.assign({data: data},params));
         }
-    });
+    },params));
 
     /*监听上下架开关*/
     form.on('switch(switchTest)', function (data) {
@@ -229,13 +249,13 @@ layui.define(['table', 'form'], function (exports) {
                             , where: {'token': layui.data('data').token}
                             , title: '详情'
                             , cols: [[
-                                {type: 'numbers',title: '序号',align: 'center'},
+                                {type: 'numbers', title: '序号', align: 'center'},
                                 {field: 'type', title: '类别', align: 'center'},
-                                {field: 'partnerName',title: '公司名称',align: 'center'},
-                                {field: 'liableName',title: '姓名',align: 'center'},
-                                {field: 'liablePhone',title: '手机号',align: 'center'},
-                                {field: 'address',title: '地址',align: 'center'},
-                                {field: 'status', title: '状态', align: 'center', templet: '#status' }
+                                {field: 'partnerName', title: '公司名称', align: 'center'},
+                                {field: 'liableName', title: '姓名', align: 'center'},
+                                {field: 'liablePhone', title: '手机号', align: 'center'},
+                                {field: 'address', title: '地址', align: 'center'},
+                                {field: 'status', title: '状态', align: 'center', templet: '#status'}
                             ]]
                             , text: {none: '暂无数据', error: '对不起，加载出现异常！'}
                             , done: function (data) {
@@ -257,11 +277,11 @@ layui.define(['table', 'form'], function (exports) {
                             , where: {'token': layui.data('data').token}
                             , title: '人员列表'
                             , cols: [[
-                                {type: 'numbers',title: '序号',align: 'center'},
+                                {type: 'numbers', title: '序号', align: 'center'},
                                 {field: 'actualName', title: '姓名', align: 'center'},
                                 {field: 'phone', title: '手机号', align: 'center'},
                                 {field: 'role', title: '角色', align: 'center'},
-                                {field: 'status', title: '状态', align: 'center', templet: '#status' }
+                                {field: 'status', title: '状态', align: 'center', templet: '#status'}
                             ]]
                             , text: {none: '暂无数据', error: '对不起，加载出现异常！'}
                             , done: function (data) {
