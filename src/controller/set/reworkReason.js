@@ -13,18 +13,16 @@ layui.define(['table', 'form'], function (exports) {
     /*列表*/
     table.render({
         elem: '#LAY-rework-reason-manage',
-        url: layui.setter.ajaxUrl + 'rework/reason/list',
+        url: layui.setter.ajaxUrl + 'api/rework/reason/list',
         method: 'get',
         cols: [
             [{
-                type: 'checkbox'
-            }, {
-                type: 'numbers',
-                title: '序号',
+                field: 'reason',
+                title: '返工原因',
                 align: 'center'
             }, {
-                field: 'reworkReason',
-                title: '返工原因',
+                field: 'storeId',
+                title: '店铺',
                 align: 'center'
             },{
                 title: '操作',
@@ -110,6 +108,7 @@ layui.define(['table', 'form'], function (exports) {
     /*监听数据报告编辑、删除操作*/
     table.on('tool(LAY-rework-reason-manage)', function (obj) {
         var data = obj.data;
+        var select = data;
         if (obj.event === 'del') {
             layer.confirm('真的删除行么', function (index) {
                 $.ajax({
@@ -155,29 +154,22 @@ layui.define(['table', 'form'], function (exports) {
                 area: ['600px', '650px'],
                 id: 'LAY-popup-user-add',
                 success: function (layero, index) {
-                    view(this.id).render('serviceStore/form', data).done(function () {
-                        form.on('submit(LAY-reportData-front-submit)', function (data) {
+                    view(this.id).render('set/reworkReasonForm', data).done(function () {
+                        form.on('submit(LAY-store-front-submit)', function (data) {
                             var field = data.field;
-                            field.token = layui.data('data').token;
                             field.id = obj.data.id;
-                            var id = '';
-                            $("input:checkbox[name='checkbox']:checked").each(function (i) {
-                                id += $(this).attr('id') + ',';
-                            });
-                            id = id.slice(0, -1);
+                            field.token = layui.data('data').token;
                             $.ajax({
-                                url: layui.setter.ajaxUrl + "/api/admin/cloud/report/edit",
-                                method: "post",
+                                url: layui.setter.ajaxUrl + "api/rework/reason/update",
+                                method: "put",
                                 contentType: 'application/json;charset=UTF-8',
-                                data: JSON.stringify({
-                                    field
-                                }),
+                                data: JSON.stringify(field),
                                 success: function (data) {
                                     if (data.data == 1) {
                                         layer.alert('已更新', {
                                             icon: 1
                                         });
-                                        layui.table.reload('LAY-service-store-manage');
+                                        layui.table.reload('LAY-rework-reason-manage');
                                     } else {
                                         layer.alert('编辑失败，请稍后重试', {
                                             icon: 2

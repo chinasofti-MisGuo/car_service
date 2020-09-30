@@ -4,9 +4,20 @@
             <label class="layui-form-label">反工原因</label>
             <div class="layui-input-inline">
                 <script type="text/html" template>
-                    <input type="text" name="reworkReason" value="{{ d.params.reworkReason || '' }}" placeholder="请输入"
+                    <input type="text" name="reason" value="{{ d.params.reasons || '' }}" placeholder="请输入"
                         autocomplete="off" class="layui-input">
                 </script>
+            </div>
+        </div>
+
+        <div class="layui-inline">
+            <label class="layui-form-label">店铺</label>
+            <div class="layui-input-block" style="width: 150px;">
+                <script type="text/html" template>
+                    <input type="hidden" id="roleId" value="{{d.params.storeName}}" />
+                    <select name="storeId" id="role" lay-verify="required"></select>
+                </script>
+
             </div>
         </div>
 
@@ -23,4 +34,33 @@
 </div>
 
 <script>
+    layui.use(['jquery','form'], function () {
+        var form =layui.form;
+        var $ = layui.jquery;
+        $.ajax({
+            url: layui.setter.ajaxUrl + 'api/store/list',
+            method: "get",
+            data: {
+                //   'token': layui.data('data').token
+                limit: 10,
+                page: 1
+            },
+            success: function (result) {
+                var list = result["data"];
+                var server = document.getElementById("role");
+                for (var p in list) {
+                    var option = document.createElement("option");
+                    option.setAttribute("value", list[p].id);
+                    option.innerText = list[p].storeName;
+                    server.appendChild(option);
+                    form.render("select");
+                }
+                if (list[p].id != 'undefined') {
+                    var classId = 'dd[lay-value=' + list[p].id + ']';
+                    $("#role").next().find('dl').find(classId).click();
+                }
+                form.render('select');
+            }
+        })
+    });
 </script>
