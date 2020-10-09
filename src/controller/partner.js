@@ -13,37 +13,41 @@ layui.define(['table', 'form'], function(exports) {
 	/*轮播图列表*/
 	table.render({
 		elem: '#LAY-partner-manage',
-		url: layui.setter.ajaxUrl + '/api/admin/partner/list',
+		url: layui.setter.ajaxUrl + 'api/partner/add',
 		method: 'get',
 		cols: [
 			[{
-				type: 'numbers',
-				title: '序号',
+				field: 'address',
+				title: '地址',
 				align: 'center'
 			}, {
-				field: 'partnerName',
-				title: '合作机构名称',
+				field: 'longitude',
+				title: '经度',
 				align: 'center'
 			}, {
-				field: 'partnerPhone',
-				title: '联系方式',
+				field: 'latitude',
+				title: '纬度',
 				align: 'center'
 			}, {
-				field: 'partnerPeople',
-				title: '合作机构联系人',
-				align: 'center'
-			}, {
-				field: 'status',
-				title: '状态',
+				field: 'liableName',
+				title: '联系人姓名',
 				align: 'center',
 				templet: '#status'
 			}, {
-				field: 'startTime',
-				title: '合作开始时间',
+				field: 'liablePhone',
+				title: '联系人手机号',
 				align: 'center'
 			},{
-				field: 'endTime',
-				title: '合作结束时间',
+				field: 'partnerName',
+				title: '合作商名称',
+				align: 'center'
+			},{
+				field: 'region',
+				title: '地区',
+				align: 'center'
+			},{
+				field: 'storeId',
+				title: '门店编号',
 				align: 'center'
 			}, {
 				title: '操作',

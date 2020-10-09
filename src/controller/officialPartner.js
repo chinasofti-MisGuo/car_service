@@ -11,9 +11,10 @@ layui.define(['table', 'form'], function (exports) {
         form = layui.form;
 
     /*列表*/
+    
     table.render({
         elem: '#LAY-official-partner-manage',
-        url: layui.setter.ajaxUrl + '/api/admin/cloud/report/list',
+        url: layui.setter.ajaxUrl + 'api/partner/list',
         method: 'get',
         cols: [
             [{
@@ -23,23 +24,31 @@ layui.define(['table', 'form'], function (exports) {
                 title: '序号',
                 align: 'center'
             }, {
-                field: 'storeName',
-                title: '门店名称',
+                field: 'partnerName',
+                title: '合作商名',
                 align: 'center'
             }, {
-                field: 'storeNumber',
-                title: '门店编号',
+                field: 'address',
+                title: '地址',
+                align: 'center'
+            },{
+                field: 'longitude',
+                title: '经度',
+                align: 'center'
+            },{
+                field: 'latitude',
+                title: '纬度',
                 align: 'center'
             }, {
-                field: 'storeAddress',
-                title: '门店地址',
+                field: 'region',
+                title: '区域',
                 align: 'center'
             }, {
-                field: 'fullName',
+                field: 'liableName',
                 title: '负责人姓名',
                 align: 'center'
             }, {
-                field: 'phone',
+                field: 'liablePhone',
                 title: '负责人手机号',
                 align: 'center'
             }, {
@@ -178,7 +187,7 @@ layui.define(['table', 'form'], function (exports) {
                 area: ['600px', '650px'],
                 id: 'LAY-popup-user-add',
                 success: function (layero, index) {
-                    view(this.id).render('store/form', data).done(function () {
+                    view(this.id).render('officialPartner/form', data).done(function () {
                         form.on('submit(LAY-reportData-front-submit)', function (data) {
                             var field = data.field;
                             field.token = layui.data('data').token;
@@ -189,12 +198,10 @@ layui.define(['table', 'form'], function (exports) {
                             });
                             id = id.slice(0, -1);
                             $.ajax({
-                                url: layui.setter.ajaxUrl + "/api/admin/cloud/report/edit",
+                                url: layui.setter.ajaxUrl + "api/partner/update",
                                 method: "post",
                                 contentType: 'application/json;charset=UTF-8',
-                                data: JSON.stringify({
-                                    field
-                                }),
+                                data: JSON.stringify(field),
                                 success: function (data) {
                                     if (data.data == 1) {
                                         layer.alert('已更新', {
@@ -235,54 +242,120 @@ layui.define(['table', 'form'], function (exports) {
                 success: function (layero, index) {
                     view(this.id).render('officialPartner/detail', data).done(function () {
                         table.render({
-                            url: layui.setter.ajaxUrl + '/'
-                            , elem: '#LAY-partner-manage'
-                            , method: "get"
-                            , contentType: 'application/json;charset=UTF-8'
-                            , where: {'token': layui.data('data').token}
-                            , title: '详情'
-                            , cols: [[
-                                {type: 'numbers',title: '序号',align: 'center'},
-                                {field: 'type', title: '类别', align: 'center'},
-                                {field: 'partnerName',title: '公司名称',align: 'center'},
-                                {field: 'liableName',title: '姓名',align: 'center'},
-                                {field: 'liablePhone',title: '手机号',align: 'center'},
-                                {field: 'address',title: '地址',align: 'center'},
-                                {field: 'status', title: '状态', align: 'center', templet: '#status' }
-                            ]]
-                            , text: {none: '暂无数据', error: '对不起，加载出现异常！'}
-                            , done: function (data) {
+                            url: layui.setter.ajaxUrl + '/',
+                            elem: '#LAY-partner-manage',
+                            method: "get",
+                            contentType: 'application/json;charset=UTF-8',
+                            where: {
+                                'token': layui.data('data').token
+                            },
+                            title: '详情',
+                            cols: [
+                                [{
+                                        type: 'numbers',
+                                        title: '序号',
+                                        align: 'center'
+                                    },
+                                    {
+                                        field: 'type',
+                                        title: '类别',
+                                        align: 'center'
+                                    },
+                                    {
+                                        field: 'partnerName',
+                                        title: '公司名称',
+                                        align: 'center'
+                                    },
+                                    {
+                                        field: 'liableName',
+                                        title: '姓名',
+                                        align: 'center'
+                                    },
+                                    {
+                                        field: 'liablePhone',
+                                        title: '手机号',
+                                        align: 'center'
+                                    },
+                                    {
+                                        field: 'address',
+                                        title: '地址',
+                                        align: 'center'
+                                    },
+                                    {
+                                        field: 'status',
+                                        title: '状态',
+                                        align: 'center',
+                                        templet: '#status'
+                                    }
+                                ]
+                            ],
+                            text: {
+                                none: '暂无数据',
+                                error: '对不起，加载出现异常！'
+                            },
+                            done: function (data) {
                                 if (data.code == 403) {
                                     layer.closeAll();
                                     admin.exit();
                                     setTimeout(function () {
-                                        layer.alert('此账号已在别处登录,请重新登录！', {icon: 5});
+                                        layer.alert('此账号已在别处登录,请重新登录！', {
+                                            icon: 5
+                                        });
                                     }, 10);
                                 }
                             }
                         });
 
                         table.render({
-                            url: layui.setter.ajaxUrl + '/'
-                            , elem: '#LAY-user-message'
-                            , method: "get"
-                            , contentType: 'application/json;charset=UTF-8'
-                            , where: {'token': layui.data('data').token}
-                            , title: '人员列表'
-                            , cols: [[
-                                {type: 'numbers',title: '序号',align: 'center'},
-                                {field: 'actualName', title: '姓名', align: 'center'},
-                                {field: 'phone', title: '手机号', align: 'center'},
-                                {field: 'role', title: '角色', align: 'center'},
-                                {field: 'status', title: '状态', align: 'center', templet: '#status' }
-                            ]]
-                            , text: {none: '暂无数据', error: '对不起，加载出现异常！'}
-                            , done: function (data) {
+                            url: layui.setter.ajaxUrl + '/',
+                            elem: '#LAY-user-message',
+                            method: "get",
+                            contentType: 'application/json;charset=UTF-8',
+                            where: {
+                                'token': layui.data('data').token
+                            },
+                            title: '人员列表',
+                            cols: [
+                                [{
+                                        type: 'numbers',
+                                        title: '序号',
+                                        align: 'center'
+                                    },
+                                    {
+                                        field: 'actualName',
+                                        title: '姓名',
+                                        align: 'center'
+                                    },
+                                    {
+                                        field: 'phone',
+                                        title: '手机号',
+                                        align: 'center'
+                                    },
+                                    {
+                                        field: 'role',
+                                        title: '角色',
+                                        align: 'center'
+                                    },
+                                    {
+                                        field: 'status',
+                                        title: '状态',
+                                        align: 'center',
+                                        templet: '#status'
+                                    }
+                                ]
+                            ],
+                            text: {
+                                none: '暂无数据',
+                                error: '对不起，加载出现异常！'
+                            },
+                            done: function (data) {
                                 if (data.code == 403) {
                                     layer.closeAll();
                                     admin.exit();
                                     setTimeout(function () {
-                                        layer.alert('此账号已在别处登录,请重新登录！', {icon: 5});
+                                        layer.alert('此账号已在别处登录,请重新登录！', {
+                                            icon: 5
+                                        });
                                     }, 10);
                                 }
                             }
